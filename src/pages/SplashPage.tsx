@@ -1,4 +1,4 @@
-import logo from '../../logo.png';
+import logo from '../../public/logo.png';
 
 function SplashPage() {
     return (

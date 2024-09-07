@@ -51,7 +51,7 @@
       "index.html"
     ],
     "win": {
-      "icon": "./electron/icon.png",
+      "icon": "./public/icon.ico",
       "target": "nsis"
     },
     "linux": false,

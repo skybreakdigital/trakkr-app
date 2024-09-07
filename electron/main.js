@@ -35,8 +35,8 @@ function createWindow() {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
     const iconPath = process.platform === 'win32' 
-    ? path.join(__dirname, 'icon.ico')
-    : path.join(__dirname, 'icon.png');
+    ? path.join(__dirname, '../public/favicon-32x32.ico')
+    : path.join(__dirname, '../public/favicon-16x16.png');
 
     mainWindow = new BrowserWindow({
         width,
