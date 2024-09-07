@@ -1,0 +1,17 @@
+.Themes {
+    .theme-item {
+        height: 50px;
+        background: $gray;
+        padding: .5rem;
+        cursor: pointer;
+        border: 1px solid transparent;
+        .color {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 4px;
+        }
+        &.active {
+            border: 1px solid var(--accent);
+        }
+    }
+}

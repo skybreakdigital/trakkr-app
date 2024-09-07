@@ -1,0 +1,28 @@
+.TabMenu {
+    button {
+        &.active {
+            .badge {
+                &.accent {
+                    border: 1px solid $gray-dark !important;
+                    color: $gray-dark !important;
+                    background: transparent;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 50%;
+                    font-size: 11px;
+                  }
+            }
+        }
+        .badge {
+            &.accent {
+                border: 1px solid var(--accent) !important;
+                color: var(--accent) !important;
+                background: transparent;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                font-size: 11px;
+              }
+        }
+    }
+}

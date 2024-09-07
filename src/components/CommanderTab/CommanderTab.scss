@@ -1,0 +1,19 @@
+.CommanderTab {
+    background: $gray2;
+    margin-top: -1rem;
+    margin-left: -1rem;
+    width: calc(100% + 16px);
+    position: sticky;
+    top: 0;
+    .tab-item {
+        cursor: pointer;
+        padding: .5rem;
+        opacity: .5;
+        border-bottom: 2px solid transparent;
+        &:hover, &.active {
+            background: $gray;
+            border-bottom: 2px solid var(--accent);
+            opacity: 1;
+        }
+    }
+}

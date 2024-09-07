@@ -1,0 +1,25 @@
+.NavMenu {
+    background: $gray;
+    width: 70px;
+    height: 100vh;
+    position: fixed;
+    cursor: pointer;
+    .brand {
+        position: absolute;
+        top: 0;
+        margin-top: 1rem;
+        img {
+            width: 50px;
+            height: 50px;
+        }
+    }
+    .nav-item {
+        border-radius: 10px;
+        width: 50px;
+        height: 50px;
+        &:hover, &.active {
+            background: $gray-dark;
+            color: var(--accent);
+        }
+    }
+}

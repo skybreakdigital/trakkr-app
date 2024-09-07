@@ -1,0 +1,161 @@
+@import 'primeflex/primeflex.scss';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #0D0D0D;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+
+  --accent: #0051ff;
+
+  // colors
+  --jet: #0051ff;
+  --stark: #abc900;
+  --crimson: #de0000e3;
+  --ocean: #18b7bc;
+  --sunset: #ff5900;
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--accent);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: calc(100vh - 20px);
+  overflow-x: hidden;
+}
+
+ul li {
+  display: flex;
+}
+
+ul li > div {
+  margin-right: .5rem;
+}
+
+.Layout {
+  .content {
+    margin-left: 70px;
+  }
+}
+
+.green {
+  color: $green;
+}
+.text-accent {
+  color: var(--accent);
+}
+.bg-primary {
+  background-color: $gray2;
+}
+
+button {
+  border: 0;
+  padding: 8px;
+  text-transform: uppercase;
+  background: $gray;
+  cursor: pointer;
+  &.accent {
+    background: var(--accent);
+  }
+}
+
+.mission-list {
+  .mission-list-item {
+      font-size: 14px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      .row-item {
+          padding: .5rem 1rem;
+          background: $gray;
+      }
+  }
+}
+
+progress {
+  margin: 0;
+  border-radius: 0;
+  height: 4px;
+  background-color: $gray-dark !important;
+  border: none;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  &::-webkit-progress-value {
+    background-color: var(--accent);
+    border-radius: 0;
+  }
+}
+
+button {
+  max-height: 35px;
+}
+
+.badge {
+  background: transparent;
+  border: 1px solid $red;
+  padding: .25rem;
+  border-radius: 1rem;
+  font-size: 12px;
+  .fa-solid {
+    color: $red;
+    margin-right: 5px;
+  }
+  &.accent {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: transparent;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    font-size: 11px;
+  }
+  &.primary {
+    border: 1px solid $gray-dark;
+    color: $gray-dark;
+    background: transparent;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    font-size: 11px;
+  }
+}
+
+
+.disabled {
+  pointer-events: none;
+  opacity: .30;
+}
+
+.Empty {
+  background: $gray;
+  padding: .5rem;
+  width: 100%;
+}
+
+input {
+  background: $gray-dark;
+  border: 1px solid $gray-light;
+  padding: .25rem;
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}

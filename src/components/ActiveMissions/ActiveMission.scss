@@ -1,0 +1,10 @@
+.ActiveMissions {
+   .row-item.custom {
+    position: relative;
+    progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+   }
+}
