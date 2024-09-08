@@ -1,8 +1,10 @@
 const { app, BrowserWindow, ipcMain, Menu, screen } = require('electron');
 const { watchJournalChanges } = require('./events/journal');
 const { getMissionDetails } = require('./events/mission');
-const { getConfig, createConfig } = require('./data/config');
+const { getConfig, createConfig, updateConfig } = require('./data/config');
+const commodityData = require('./data/json/commodities.json');
 const path = require('path');
+const { getState, setState } = require('./data/state');
 const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow = null;
@@ -61,6 +63,16 @@ function createWindow() {
     }
 
     mainWindow.on('ready-to-show', () => {
+        const configData = getConfig();
+
+        // If a config does not exist, default one.
+        if(!configData) {
+            createConfig({
+                theme: 'jet',
+                commodityPrices: commodityData
+            });
+        }
+
         watchJournalChanges(mainWindow);  
     });
     
@@ -97,10 +109,16 @@ ipcMain.handle('get-mission-details', async () => {
     return getMissionDetails();
 });
 
-ipcMain.handle('get-mission-config', async () => {
+ipcMain.handle('get-config', async () => {
     return getConfig();
 });
+ipcMain.handle('update-config', async (event, data) => {
+    return updateConfig(data);
+});
 
-ipcMain.handle('set-mission-config', async (event, data) => {
-    return createConfig(data);
+ipcMain.handle('set-state', async (event, data) => {
+    return setState(data);
+});
+ipcMain.handle('get-state', async () => {
+    return getState();
 });

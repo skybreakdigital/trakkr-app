@@ -21,17 +21,24 @@ function Commodity({ commodityData }: any) {
             <ul className="mission-list m-0">
                 {commodityData.map((data: any, index: number) => (
                     <li key={index} className="mission-list-item flex">
-                        <div className="row-item w-full flex flex-wrap gap-2 justify-content-between align-items-center">
-                            <div className={data.count === data.delivered ? 'green' : ''}>{data.commodity}
-                            {(data.count - data.delivered) !== 0 && (data.count - data.delivered) <= cargo && (
-                                    <span className="badge ml-3 px-3 text-xs"><i className="fa-solid fa-triangle-exclamation" /> Buy {data.count - data.delivered}</span>
+                        <div className="row-item w-full flex flex-column flex-wrap gap-1 justify-content-between p-2">
+                            <div className={data.count === data.delivered ? 'green flex align-items-center' : 'flex align-items-center'}>
+                                <div>{data.commodity}</div>
+                                {(data.count - data.delivered) !== 0 && (data.count - data.delivered) <= cargo && (
+                                    <div className="badge ml-3 px-2 text-xs flex justify-content-center align-items-center">
+                                        <i className="fa-solid fa-triangle-exclamation" />
+                                        <div>Buy {data.count - data.delivered}</div>
+                                    </div>
                                 )}
                             </div>
-                            <div className="text-sm">
-                                <span className="opacity-50">{data.delivered}</span> / {data.count} -
-                                <span> {Math.ceil(((data.delivered / data.count) * 100))}% Completed</span>
+                            <div className="text-sm flex justify-content-between">
+                                <div>
+                                    <span className="opacity-50">{data.delivered}</span> / {data.count} -
+                                    <span> {Math.ceil(((data.delivered / data.count) * 100))}% Completed</span>
+                                </div>
+                                
                                 {(data.count - data.delivered) !== 0 && calculateRuns(data.count) !== 0 && (
-                                    <span className="ml-3">{calculateRuns(data.count - data.delivered)} {calculateRuns(data.count) === 1 ? 'Haul' : 'Hauls'} left</span>
+                                    <div className="ml-3">{calculateRuns(data.count - data.delivered)} {calculateRuns(data.count) === 1 ? 'Haul' : 'Hauls'} left</div>
                                 )}
                             </div>
                         </div>

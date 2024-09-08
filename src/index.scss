@@ -82,7 +82,7 @@ button {
       margin-bottom: 5px;
       text-transform: uppercase;
       .row-item {
-          padding: .5rem 1rem;
+          // padding: .5rem 1rem;
           background: $gray;
       }
   }
@@ -111,7 +111,7 @@ button {
 .badge {
   background: transparent;
   border: 1px solid $red;
-  padding: .25rem;
+  padding: .25rem .25rem .15rem .25rem;
   border-radius: 1rem;
   font-size: 12px;
   .fa-solid {

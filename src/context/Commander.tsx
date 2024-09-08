@@ -12,15 +12,31 @@ export const CommanderProvider = ({ children }: any) => {
     const [fetchedAt, setFetchedAt]: any = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const chooseActiveCommander = (fid: string) => {
+    const setCommander = (fid: string) => {
+        window.electron.setState({ activeCommander: missionData[fid]});
         setActiveCommander(missionData[fid])
+    }
+
+    const fetchState = async () => {
+        try {
+            const state = await window.electron.getState();
+
+            if(!state) return;
+
+            if(state.activeCommander) {
+                setActiveCommander(state.activeCommander);
+            }
+        } catch(e) {
+
+        }
     }
 
     const fetchMissionData = async () => {
         try {
-            const data = await window.electron.getMissionDetails();
+            const data: any = await window.electron.getMissionDetails();
+            console.log('fetched mission data: ', data);
             setMissionData(data);
-            setCommodityConfig(commodityData)
+            setCommodityConfig(commodityData);
             setFetchedAt(new Date());
         } catch (error) {
             console.error("Error fetching mission data:", error);
@@ -34,6 +50,7 @@ export const CommanderProvider = ({ children }: any) => {
     }
 
     useEffect(() => {
+        fetchState();
         fetchMissionData();
 
         // Updates in real-time when the game write to the journal file
@@ -46,14 +63,38 @@ export const CommanderProvider = ({ children }: any) => {
         };
     }, []);
 
+    useEffect(() => {
+        if(!missionData) return;
+
+        const updateStateWithMissionData = async () => {
+            const { activeCommander: commander } = await window.electron.getState();
+
+            const cmdrFIDs = Object.keys(missionData);
+
+            if(cmdrFIDs.length > 0) {
+                if(commander) {
+                    const { fid: activeFID } = commander.info;
+                    
+                    if(activeFID && cmdrFIDs.includes(activeFID)) {
+                        setCommander(activeFID);
+                    }
+                } else {
+                    setCommander(cmdrFIDs[0]);
+                }
+            }
+        }
+
+        updateStateWithMissionData();
+    }, [missionData]);
+
     const value = {
         missionData,
-        // missionConfig,
         commodityConfig,
         activeCommander,
         fetchedAt,
         loading,
-        chooseActiveCommander,
+        fetchMissionData,
+        setCommander,
         updateCommodityConfig
     };
 

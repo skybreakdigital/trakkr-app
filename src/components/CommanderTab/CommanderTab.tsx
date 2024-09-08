@@ -3,7 +3,7 @@ import './CommanderTab.scss';
 import { useCommanderState } from "../../context/Commander";
 
 function CommanderTab({ commanderData }: any) {
-    const { activeCommander, chooseActiveCommander }: any = useCommanderState();
+    const { activeCommander, setCommander: chooseActiveCommander }: any = useCommanderState();
     const [commander, setCommander]: any = useState(null);
 
     useEffect(() => {
@@ -11,11 +11,11 @@ function CommanderTab({ commanderData }: any) {
         setCommander(activeCommander);
     }, [activeCommander]);
 
-    useEffect(() => {
-        if (!commander && Object.keys(commanderData).length > 0) {
-            chooseActiveCommander(Object.keys(commanderData)[0]);
-        }
-    }, [commander, commanderData, chooseActiveCommander]);
+    // useEffect(() => {
+    //     if (!commander && Object.keys(commanderData).length > 0) {
+    //         chooseActiveCommander(Object.keys(commanderData)[0]);
+    //     }
+    // }, [commander, commanderData, chooseActiveCommander]);
 
     return (
         <div className="CommanderTab flex justify-content-start align-items-center gap-2 px-2 mb-3">

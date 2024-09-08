@@ -14,7 +14,7 @@ import commodityData from '../helpers/commodities.json';
 import dayjs from "dayjs";
 
 function MissionPage() {
-    const { activeCommander, fetchedAt }: any = useCommanderState();
+    const { activeCommander, fetchedAt, fetchMissionData }: any = useCommanderState();
 
     const [time, setTime]: any = useState(dayjs().format('HH:mm:ss'));
     const [menuItems, setMenuItems]: any = useState([
@@ -113,6 +113,10 @@ function MissionPage() {
             return earliest;
         }, null);
     }
+
+    useEffect(() => {
+        fetchMissionData();
+    }, []);
 
     useEffect(() => {
         if (!activeCommander) return;

@@ -1,9 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
+  setState: (data) => ipcRenderer.invoke('set-state', data),
+  getState: () => ipcRenderer.invoke('get-state'),
   getMissionDetails: () => ipcRenderer.invoke('get-mission-details'),
-  getMissionConfig: () => ipcRenderer.invoke('get-mission-config'),
-  setMissionConfig: (data) => ipcRenderer.invoke('set-mission-config', data),
   on: (channel, callback) => {
     const validChannels = ['journal-file-updated'];
     if (validChannels.includes(channel)) {

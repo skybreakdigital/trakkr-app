@@ -1,10 +1,25 @@
 .ActiveMissions {
-   .row-item.custom {
-    position: relative;
-    progress {
-        position: absolute;
-        bottom: 0;
-        left: 0;
+    .mission-list {
+        .mission-list-header {
+            margin-bottom: .5rem;
+            font-weight: bold;
+            font-size: 12px;
+            .row-item {
+                background: $gray-light;
+                padding: .25rem 0;
+            }
+        }
+        .mission-list-item {
+            .row-item.custom {
+
+                position: relative;
+                progress {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                }
+               }
+        }
     }
-   }
+   
 }
