@@ -18,8 +18,8 @@ function MissionPage() {
 
     const [time, setTime]: any = useState(dayjs().format('HH:mm:ss'));
     const [menuItems, setMenuItems]: any = useState([
-        { label: 'Incomplete', active: true, data: { count: '0'  } },
-        { label: 'Complete', active: false, data: { count: '0' } },
+        { label: 'Active', active: true, data: { count: '0'  } },
+        { label: 'Fulfilled', active: false, data: { count: '0' } },
         { label: 'Config', active: false }
     ]);
     const [acceptedMissions, setAcceptedMissions]: any = useState<any[]>([]);
@@ -131,13 +131,13 @@ function MissionPage() {
 
         setMenuItems((prevItems: any) =>
             prevItems.map((item: any) => {
-              if (item.label === 'Incomplete') {
+              if (item.label === 'Active') {
                 return {
                   ...item,
                   data: { ...item.data, count: acceptedMissions.length || '0' },
                 };
               }
-              if (item.label === 'Complete') {
+              if (item.label === 'Fulfilled') {
                 return {
                   ...item,
                   data: { ...item.data, count: completedMissions.length || '0' },
@@ -168,9 +168,9 @@ function MissionPage() {
                 onClick={onMenuClick}
             />
             <div className="flex gap-4">
-                {showUI('Incomplete') ? (
+                {showUI('Active') ? (
                     <ActiveMissions missions={acceptedMissions} />
-                ) : showUI('Complete') ? (
+                ) : showUI('Fulfilled') ? (
                     <CompleteMissions missions={completedMissions} />
                 ) : (
                     <Config />
