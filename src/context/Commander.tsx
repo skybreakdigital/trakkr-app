@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import commodityData from "../helpers/commodities.json";
 import themeData from "../helpers/themes.json";
 
 const CommanderContext = createContext({});
@@ -8,7 +7,6 @@ export const useCommanderState = () => useContext(CommanderContext);
 
 export const CommanderProvider = ({ children }: any) => {
   const [missionData, setMissionData]: any = useState({});
-  const [commodityConfig, setCommodityConfig]: any = useState(null);
   const [activeCommander, setActiveCommander]: any = useState(null);
   const [fetchedAt, setFetchedAt]: any = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,17 +33,12 @@ export const CommanderProvider = ({ children }: any) => {
       const data: any = await window.electron.getMissionDetails();
       console.log("fetched mission data: ", data);
       setMissionData(data);
-      setCommodityConfig(commodityData);
       setFetchedAt(new Date());
     } catch (error) {
       console.error("Error fetching mission data:", error);
     } finally {
       setLoading(false); // Data fetch is complete
     }
-  };
-
-  const updateCommodityConfig = (data: any) => {
-    setCommodityConfig(data);
   };
 
   const setTheme = async (color: any) => {
@@ -56,6 +49,12 @@ export const CommanderProvider = ({ children }: any) => {
     await window.electron.setState({ theme });
 
     document.documentElement.style.setProperty("--accent", color);
+  };
+
+  const setCommodityConfig = async (config: any) => {
+    await window.electron.setState({
+      commodityConfig: config
+    });
   };
 
   const getTheme = async () => {
@@ -111,14 +110,13 @@ export const CommanderProvider = ({ children }: any) => {
 
   const value = {
     missionData,
-    commodityConfig,
     activeCommander,
     fetchedAt,
     loading,
     fetchMissionData,
     setCommander,
     setTheme,
-    updateCommodityConfig
+    setCommodityConfig
   };
 
   return (

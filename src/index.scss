@@ -74,6 +74,12 @@ button {
   &.accent {
     background: var(--accent);
   }
+  &.primary {
+    background: $gray-light;
+    &:hover {
+      background: rgba($gray-light, .75);
+    }
+  }
 }
 
 .mission-list {
@@ -154,6 +160,7 @@ input {
   background: $gray-dark;
   border: 1px solid $gray-light;
   padding: .25rem;
+  height: 24px;
   &:focus {
     outline: none;
     border-color: var(--accent);

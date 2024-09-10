@@ -63,13 +63,11 @@ function createWindow() {
     }
 
     mainWindow.on('ready-to-show', () => {
-        const configData = getConfig();
+        const state = getState();
 
-        // If a config does not exist, default one.
-        if(!configData) {
-            createConfig({
-                theme: 'jet',
-                commodityPrices: commodityData
+        if(state && !state.commodityConfig) {
+            setState({
+                commodityConfig: commodityData
             });
         }
 
