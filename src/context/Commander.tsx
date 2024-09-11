@@ -9,6 +9,7 @@ export const CommanderProvider = ({ children }: any) => {
   const [missionData, setMissionData]: any = useState({});
   const [activeCommander, setActiveCommander]: any = useState(null);
   const [fetchedAt, setFetchedAt]: any = useState(null);
+  const [state, setState]: any = useState({});
   const [loading, setLoading] = useState(true);
 
   const setCommander = (fid: string) => {
@@ -21,6 +22,8 @@ export const CommanderProvider = ({ children }: any) => {
       const state = await window.electron.getState();
 
       if (!state) return;
+
+      setState(state);
 
       if (state.activeCommander) {
         setActiveCommander(state.activeCommander);
@@ -55,6 +58,7 @@ export const CommanderProvider = ({ children }: any) => {
     await window.electron.setState({
       commodityConfig: config
     });
+    fetchState();
   };
 
   const getTheme = async () => {
@@ -113,6 +117,7 @@ export const CommanderProvider = ({ children }: any) => {
     activeCommander,
     fetchedAt,
     loading,
+    state,
     fetchMissionData,
     setCommander,
     setTheme,
