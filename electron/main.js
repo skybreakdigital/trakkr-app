@@ -65,7 +65,7 @@ function createWindow() {
     mainWindow.on('ready-to-show', () => {
         const state = getState();
 
-        if(state && !state.commodityConfig) {
+        if(state && !state.commodityConfig || Object.keys(state.commodityConfig).length === 0) {
             setState({
                 commodityConfig: commodityData
             });

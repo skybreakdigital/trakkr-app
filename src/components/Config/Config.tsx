@@ -1,43 +1,95 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCommanderState } from "../../context/Commander";
 import "./Config.scss";
 
 function Config() {
   const { setCommodityConfig }: any = useCommanderState();
 
-  const [config, setConfig]: any = useState({});
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
-  const onChange = (e: any) => {
+  const [config, setConfig]: any = useState({});
+  const [initialConfig, setInitialConfig]: any = useState({});
+
+  const onNameChange = (e: any, oldKey: string) => {
+    const { value: newKey } = e.target;
+
+    if (!newKey.trim()) return;
+
+    const updatedConfig = { ...config };
+
+    if (updatedConfig[newKey]) {
+      alert("A commodity with this name already exists.");
+      return;
+    }
+
+    updatedConfig[newKey] = updatedConfig[oldKey];
+    delete updatedConfig[oldKey];
+
+    setConfig(updatedConfig);
+
+    setTimeout(() => {
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const onPriceChange = (e: any) => {
     const { value, name } = e.target;
 
     setConfig({
       ...config,
-      [name]: parseInt(value)
+      [name]: value ? parseInt(value) : ""
     });
   };
 
   const onAddCommodityClick = () => {
     setConfig({
-      ...config
+      ...config,
+      ["new_commodity"]: 0
     });
   };
 
-  const onSaveClick = async () => {
+  const onSaveCommodity = async () => {
     setCommodityConfig(config);
+
+    const commodityConfig = await getCommodityConfig();
+
+    if (commodityConfig) {
+      setInitialConfig(commodityConfig);
+    }
+  };
+
+  const removeCommodity = (key: string) => {
+    const updatedConfig = { ...config };
+    delete updatedConfig[key];
+    setConfig(updatedConfig);
+    setCommodityConfig(updatedConfig);
+  };
+
+  const valueHasChanged = (key: string) => {
+    return config[key] !== initialConfig[key];
+  };
+
+  const getCommodityConfig = async () => {
+    const state = await window.electron.getState();
+
+    const { commodityConfig } = state;
+
+    return commodityConfig;
   };
 
   useEffect(() => {
-    const getCommodityConfig = async () => {
-      const state = await window.electron.getState();
-
-      const { commodityConfig } = state;
+    const fetchCommodityConfig = async () => {
+      const commodityConfig = await getCommodityConfig();
 
       if (commodityConfig) {
         setConfig(commodityConfig);
+        setInitialConfig(commodityConfig);
       }
     };
 
-    getCommodityConfig();
+    fetchCommodityConfig();
   }, []);
 
   return (
@@ -45,30 +97,36 @@ function Config() {
       <div className="flex justify-content-between align-items-center p-3">
         <div className="text-md font-bold uppercase">Commodity Config</div>
         <div className="flex gap-2">
-          <button className="primary">
+          <button className="primary" onClick={onAddCommodityClick}>
             <i className="fa-solid fa-plus" /> Add Commodity
-          </button>
-          <button className="accent" onClick={onSaveClick}>
-            Save
           </button>
         </div>
       </div>
-      <div className="px-3">
-        Available commodities are managed by{" "}
-        <span className="font-bold">Trakkr</span>. Not all commodities will be
-        available.
-      </div>
       <div className="w-6 section">
         {Object.keys(config).map((key) => (
-          <div key={key} className="my-3 flex align-items-center gap-2 w-6">
-            <label className="text-md uppercase w-6">{key}</label>
-            <div className="flex align-items-center gap-1 w-6">
-              <input name={key} value={config[key]} onChange={onChange}></input>
-              <div className="flex gap-2">
-                <button className="primary">
-                  <i className="fa-solid fa-times" />
+          <div key={key} className="my-3 flex align-items-center gap-2">
+            <input
+              ref={nameInputRef}
+              className="w-5 uppercase"
+              name="name"
+              value={key}
+              onChange={(e) => onNameChange(e, key)}
+            ></input>
+            <input
+              className="w-4"
+              name={key}
+              value={config[key]}
+              onChange={onPriceChange}
+            ></input>
+            <div className="flex gap-2 w-3">
+              <button className="primary" onClick={() => removeCommodity(key)}>
+                <i className="fa-solid fa-times" />
+              </button>
+              {valueHasChanged(key) && (
+                <button className="primary" onClick={onSaveCommodity}>
+                  <i className="fa-solid fa-check text-accent" />
                 </button>
-              </div>
+              )}
             </div>
           </div>
         ))}
