@@ -1,9 +1,12 @@
 name: Branch Name Check
 
 on:
+  pull_request:
+    branches:
+      - 'develop'
   push:
     branches:
-      - '**'  # Trigger on any branch push
+      - 'develop'
 
 jobs:
   check-branch-name:
