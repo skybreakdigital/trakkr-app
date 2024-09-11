@@ -11,6 +11,9 @@ This app was designed and developed to assist Elite Dangerous Commanders who are
 - Sexy UI
 - Themes
 
+## Download
+Check the lastest release and download the .exe for use.
+
 ## Credits
 
 Built by
