@@ -2,7 +2,7 @@
 
 This app is in Early Development. Trakkr was designed and developed to assist Elite Dangerous Commanders who are involved in `Wing Mining Mission` operations.
 
-<img src="public/cover.png" alt="GitHub Logo" width="300"/>
+<img src="public/cover.png" alt="GitHub Logo" width="500"/>
 
 ## Features
 
