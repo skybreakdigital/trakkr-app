@@ -4,6 +4,7 @@ This app was designed and developed to assist Elite Dangerous Commanders who are
 
 ## Features
 
+- Realtime Multi-Commander Support
 - Mission Tracking
 - Commodity Quantities Tracking
 - Commodity Configurations

@@ -65,12 +65,18 @@ function createWindow() {
     mainWindow.on('ready-to-show', () => {
         const state = getState();
 
-        if(state && !state.commodityConfig || Object.keys(state.commodityConfig).length === 0) {
+        // First check for user local state, then for commodityConfig
+        if(!state ||
+        (state && !state.commodityConfig) || 
+        (state && Object.keys(state.commodityConfig).length === 0)
+        ) {
+            // If commodity doesn't exist, set it with default config
             setState({
                 commodityConfig: commodityData
             });
         }
 
+        // Watch journals in realtime updates
         watchJournalChanges(mainWindow);  
     });
     
