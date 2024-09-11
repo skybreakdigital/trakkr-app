@@ -44,8 +44,14 @@ function CommanderTab({ commanderData }: any) {
         ))}
       </div>
 
-      <div className="text-sm uppercase m-2 w-2 flex justify-content-end">
-        Current Time: <span className="opacity-50 ml-2 w-3">{time}</span>
+      <div className="text-sm uppercase m-2 w-3 flex justify-content-end align-items-center gap-2">
+        <div className="lowercase font-bold text-accent">
+          v{process.env.APP_VERSION}
+        </div>
+        <div>|</div>
+        <div>
+          Current Time: <span className="opacity-50 ml-2 w-2">{time}</span>
+        </div>
       </div>
     </div>
   );
