@@ -10,11 +10,10 @@ import ShipSpecs from "../components/ShipSpecs/ShipSpecs";
 import { useCommanderState } from "../context/Commander";
 import Empty from "../components/Empty/Empty";
 import Config from "../components/Config/Config";
-import commodityData from "../helpers/commodities.json";
 import dayjs from "dayjs";
 
 function MissionPage() {
-  const { activeCommander, fetchedAt, fetchMissionData }: any =
+  const { activeCommander, fetchedAt, fetchMissionData, state }: any =
     useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
@@ -25,9 +24,9 @@ function MissionPage() {
   const [acceptedMissions, setAcceptedMissions]: any = useState<any[]>([]);
   const [completedMissions, setCompletedMissions]: any = useState<any[]>([]);
   const [commodities, setCommodities]: any = useState({});
+  const [commodityConfig, setCommodityConfig]: any = useState({});
   const [totalInvestment, setTotalInvestment]: any = useState(0);
   const [totalProfit, setTotalProfit]: any = useState(0);
-  const [commodityConfig, setCommodityConfig]: any = useState(commodityData);
 
   const onMenuClick = (updatedMenu: any) => {
     setMenuItems(updatedMenu);
@@ -131,6 +130,12 @@ function MissionPage() {
   }, []);
 
   useEffect(() => {
+    if(!state || state && !state.commodityConfig) return;
+
+    setCommodityConfig(state.commodityConfig);
+  }, [state]);
+
+  useEffect(() => {
     if (!activeCommander) return;
 
     setAcceptedMissions(activeCommander.active);
@@ -160,8 +165,8 @@ function MissionPage() {
 
     const { sortedCommodities, investment } =
       calculateCommodities(commodityConfig);
-    setCommodities(sortedCommodities);
-    setTotalInvestment(investment);
+      setCommodities(sortedCommodities);
+      setTotalInvestment(investment);
   }, [acceptedMissions, completedMissions]);
 
   return (

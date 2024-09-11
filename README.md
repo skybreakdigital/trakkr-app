@@ -1,9 +1,10 @@
 # Official Trakkr App
 
-This app was designed and developed to assist Elite Dangerous Commanders who are involved in `Wing Mining Mission` operations.
+This app is in Early Development. Trakkr was designed and developed to assist Elite Dangerous Commanders who are involved in `Wing Mining Mission` operations.
 
 ## Features
 
+- Realtime Multi-Commander Support
 - Mission Tracking
 - Commodity Quantities Tracking
 - Commodity Configurations
