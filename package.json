@@ -2,7 +2,7 @@
   "name": "TrakkrApp",
   "description": "An Elite Dangerous Mission Tracker Tool",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "Dkter Roc",
   "main": "./electron/main.js",
   "homepage": "./",
@@ -19,6 +19,7 @@
     "dayjs": "^1.11.13",
     "electron-router-dom": "^1.0.5",
     "electron-store": "^5.2.0",
+    "mongodb": "^6.8.1",
     "primeflex": "^3.3.1",
     "primereact": "^10.8.2",
     "react": "^18.3.1",
@@ -51,7 +52,7 @@
       "index.html"
     ],
     "win": {
-      "icon": "./electron/icon.png",
+      "icon": "./public/icon.ico",
       "target": "nsis"
     },
     "linux": false,

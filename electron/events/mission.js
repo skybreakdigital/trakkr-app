@@ -68,10 +68,25 @@ function getMissionDetails() {
     // // console.log('Completed Missions: ', missionData.completed.length);
     // console.log('|--------------')
 
-    // Remove any broken FIDs
+    
     Object.keys(missionData).forEach(key => {
+        // Remove any broken FIDs
         if (key === 'undefined') {
             delete missionData[key];
+        }
+
+          // Check if the mission has an active array
+        if (missionData[key].active && Array.isArray(missionData[key].active)) {
+            // Filter out expired missions within the active array
+            missionData[key].active = missionData[key].active.filter(mission => {
+                if (mission.Expiry) {
+                    const expiryDate = new Date(mission.Expiry); // Assuming Expiry is in a valid date format
+                    const currentDate = new Date();
+                    // Keep only missions that have not expired
+                    return expiryDate >= currentDate;
+                }
+                return true; // Keep missions that don't have an Expiry field
+            });
         }
     });
 

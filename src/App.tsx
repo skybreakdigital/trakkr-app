@@ -15,10 +15,9 @@ type Callback = (event: any, ...args: any[]) => void;
 declare global {
   interface Window {
     electron: {
-      getCommanderInfo: () => Promise<any[]>,
+      setState: (data: any) => Promise<any>,
+      getState: () => Promise<any>,
       getMissionDetails: () => Promise<any[]>,
-      getMissionConfig: () => Promise<any>,
-      setMissionConfig: (data: any) => Promise<any>,
       on: (channel: string, callback: Callback) => void,
       removeListener: (channel: string, callback: Callback) => void
     }

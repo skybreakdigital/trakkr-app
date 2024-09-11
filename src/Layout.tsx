@@ -6,7 +6,7 @@ import { CommanderProvider, useCommanderState } from "./context/Commander";
 import dayjs from "dayjs";
 
 function Layout() {
-  const { missionData, activeCommander, chooseActiveCommander, loading }: any = useCommanderState();
+  const { missionData, activeCommander, setCommander: chooseActiveCommander, loading }: any = useCommanderState();
 
   const navigate = useNavigate();
 
@@ -15,12 +15,8 @@ function Layout() {
 
   useEffect(() => {
     if(!missionData) return;
-    setCommanderData(missionData);
-
-    if(activeCommander) {
-      chooseActiveCommander(missionData[activeCommander?.info?.fid]);
-    }
     
+    setCommanderData(missionData);
   }, [missionData]);
 
   useEffect(() => {

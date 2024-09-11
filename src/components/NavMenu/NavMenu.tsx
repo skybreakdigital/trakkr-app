@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../../../icon.png';
+import logo from '../../../public/icon.png';
 import './NavMenu.scss';
 import { useEffect, useState } from 'react';
 
