@@ -24,6 +24,13 @@ Tested by
 - BattleZone
 - AlphaLovesYou
 
+## Contribution
+All contributions should be branched from `develop`
+Please follow these naming conventions for branches:
+- **Feature branches**: `feature/branch-name`
+- **Bugfix branches**: `bugfix/branch-name`
+- **Hotfix branches**: `hotfix/branch-name`
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
