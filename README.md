@@ -2,7 +2,7 @@
 
 This app was designed and developed to assist Elite Dangerous Commanders who are involved in `Wing Mining Mission` operations.
 
-# Features
+## Features
 
 - Mission Tracking
 - Commodity Quantities Tracking
@@ -11,7 +11,7 @@ This app was designed and developed to assist Elite Dangerous Commanders who are
 - Sexy UI
 - Themes
 
-# Credits
+## Credits
 
 Built by
 
