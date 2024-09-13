@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Dialog } from "primereact/dialog";
 import ActiveMissions from "../components/ActiveMissions/ActiveMissions";
 import CompleteMissions from "../components/CompleteMissions/CompleteMissions";
 import TabMenu from "../components/TabMenu/TabMenu";
@@ -11,6 +12,7 @@ import { useCommanderState } from "../context/Commander";
 import Empty from "../components/Empty/Empty";
 import Config from "../components/Config/Config";
 import dayjs from "dayjs";
+import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 
 function MissionPage() {
   const { activeCommander, fetchedAt, fetchMissionData, state }: any =
@@ -26,7 +28,7 @@ function MissionPage() {
   const [commodities, setCommodities]: any = useState({});
   const [commodityConfig, setCommodityConfig]: any = useState({});
   const [totalInvestment, setTotalInvestment]: any = useState(0);
-  const [totalProfit, setTotalProfit]: any = useState(0);
+  const [builderVisible, setBuilderVisible]: any = useState(false);
 
   const onMenuClick = (updatedMenu: any) => {
     setMenuItems(updatedMenu);
@@ -125,12 +127,27 @@ function MissionPage() {
     }, null);
   };
 
+  const handleStackType = () => {
+    const stationCount: { [key: string]: number } = {};
+
+    completedMissions.forEach((mission: any) => {
+      const station = mission.DestinationStation;
+      if (station in stationCount) {
+        stationCount[station] += 1;
+      } else {
+        stationCount[station] = 1;
+      }
+    });
+
+    return stationCount;
+  };
+
   useEffect(() => {
     fetchMissionData();
   }, []);
 
   useEffect(() => {
-    if(!state || state && !state.commodityConfig) return;
+    if (!state || (state && !state.commodityConfig)) return;
 
     setCommodityConfig(state.commodityConfig);
   }, [state]);
@@ -165,8 +182,8 @@ function MissionPage() {
 
     const { sortedCommodities, investment } =
       calculateCommodities(commodityConfig);
-      setCommodities(sortedCommodities);
-      setTotalInvestment(investment);
+    setCommodities(sortedCommodities);
+    setTotalInvestment(investment);
   }, [acceptedMissions, completedMissions]);
 
   return (
@@ -215,12 +232,34 @@ function MissionPage() {
           ) : (
             <Empty message="No Mission Data. Evaluation could not be completed.." />
           )}
+          <div className="my-3 flex justify-content-end align-items-center">
+            <button className="accent" onClick={() => setBuilderVisible(true)}>
+              Share Stack
+            </button>
+          </div>
         </div>
       </div>
       <span className="text-xs uppercase absolute bottom-0 right-0 m-2">
         Last update:{" "}
         <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
       </span>
+      <Dialog
+        header="Share Stack"
+        style={{ width: "50%" }}
+        visible={builderVisible}
+        onHide={() => {
+          if (!builderVisible) return;
+          setBuilderVisible(false);
+        }}
+      >
+        <MessageBuilder
+          stackData={{
+            size: completedMissions.length,
+            value: calculateMissionValue(),
+            type: handleStackType()
+          }}
+        />
+      </Dialog>
     </div>
   );
 }
