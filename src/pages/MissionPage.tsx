@@ -115,6 +115,13 @@ function MissionPage() {
     return acceptedValue + completedValue;
   };
 
+  const calculateCompletedMissionValue = () => {
+    return completedMissions.reduce(
+      (total: number, mission: any) => total + (mission.Reward || 0),
+      0
+    );
+  }
+
   const calculateShareDate = () => {
     const allMissions = [...acceptedMissions, ...completedMissions];
 
@@ -233,9 +240,11 @@ function MissionPage() {
             <Empty message="No Mission Data. Evaluation could not be completed.." />
           )}
           <div className="my-3 flex justify-content-end align-items-center">
-            <button className="accent" onClick={() => setBuilderVisible(true)}>
-              Share Stack
-            </button>
+            <button
+              className="accent" 
+              onClick={() => setBuilderVisible(true)}
+              disabled={completedMissions.length < 10}
+            >Share Stack</button>
           </div>
         </div>
       </div>
@@ -255,7 +264,7 @@ function MissionPage() {
         <MessageBuilder
           stackData={{
             size: completedMissions.length,
-            value: calculateMissionValue(),
+            value: calculateCompletedMissionValue(),
             type: handleStackType()
           }}
         />
