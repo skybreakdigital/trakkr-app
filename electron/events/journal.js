@@ -79,6 +79,12 @@ function sortJournal() {
                                 credits: parsedEntry.Credits
                             }
                             break;
+                        case 'ShipyardSwap':
+                            journalData[fid].info = {
+                                ...journalData[fid].info,
+                                ship: parsedEntry.ShipType_Localised,
+                            }
+                            break;
                         case 'Commander':
                             journalData[fid].info = {
                                 ...journalData[fid].info,
