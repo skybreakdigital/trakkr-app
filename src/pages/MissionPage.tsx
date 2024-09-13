@@ -205,7 +205,7 @@ function MissionPage() {
         ) : (
           <Config />
         )}
-        <div className="w-4 flex flex-column">
+        <div className="w-3 flex flex-column">
           <Stats
             statData={[
               {
