@@ -64,6 +64,15 @@ ul li > div {
 .bg-primary {
   background-color: $gray2;
 }
+.alert {
+  background: rgba($red, .20);
+  border: 1px solid $red;
+  padding: .5rem;
+  margin-top: 1rem;
+  .fa-solid {
+    color: $red;
+  }
+}
 
 button {
   border: 0;
@@ -79,6 +88,9 @@ button {
     &:hover {
       background: rgba($gray-light, .75);
     }
+  }
+  &:disabled {
+    opacity: .35;
   }
 }
 
