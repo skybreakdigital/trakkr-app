@@ -11,7 +11,7 @@
     "build": "vite build && npm run electron-pack",
     "serve": "vite preview",
     "electron-dev": "electron .",
-    "electron-pack": "electron-builder",
+    "electron-pack": "electron-builder --publish=never",
     "electron-prep": "xcopy electron\\main.js dist\\electron\\main.js && xcopy electron\\preload.js dist\\electron\\preload.js"
   },
   "dependencies": {
