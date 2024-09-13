@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 
 function MissionPage() {
-  const { activeCommander, fetchedAt, fetchMissionData, state }: any =
+  const { activeCommander, fetchedAt, fetchMissionData, state, loading }: any =
     useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
@@ -248,10 +248,14 @@ function MissionPage() {
           </div>
         </div>
       </div>
-      <span className="text-xs uppercase absolute bottom-0 right-0 m-2">
-        Last update:{" "}
-        <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
-      </span>
+      <div className="text-xs uppercase absolute bottom-0 right-0 m-2 flex align-items-center gap-2">
+        {loading && (
+          <div className="spin">
+            <i className="fa-solid fa-spinner" />
+          </div>
+        )}
+        <div>Last update: <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span></div>
+      </div>
       <Dialog
         header="Share Stack"
         style={{ width: "50%" }}

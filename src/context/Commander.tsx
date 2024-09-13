@@ -10,7 +10,7 @@ export const CommanderProvider = ({ children }: any) => {
   const [activeCommander, setActiveCommander]: any = useState(null);
   const [fetchedAt, setFetchedAt]: any = useState(null);
   const [state, setState]: any = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const setCommander = (fid: string) => {
     window.electron.setState({ activeCommander: missionData[fid] });
@@ -40,7 +40,9 @@ export const CommanderProvider = ({ children }: any) => {
     } catch (error) {
       console.error("Error fetching mission data:", error);
     } finally {
-      setLoading(false); // Data fetch is complete
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
   };
 
@@ -78,6 +80,7 @@ export const CommanderProvider = ({ children }: any) => {
 
     // Updates in real-time when the game write to the journal file
     window.electron.on("journal-file-updated", () => {
+      setLoading(true);
       fetchMissionData();
     });
 
