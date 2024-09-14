@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CommanderTab.scss";
 import { useCommanderState } from "../../context/Commander";
+import { Dropdown } from 'primereact/dropdown';
 import dayjs from "dayjs";
 
 function CommanderTab({ commanderData }: any) {
@@ -8,6 +9,18 @@ function CommanderTab({ commanderData }: any) {
     useCommanderState();
   const [commander, setCommander]: any = useState(null);
   const [time, setTime]: any = useState(dayjs().format("HH:mm:ss"));
+
+  const onDropdownChange = (e: any) => {
+    const { value } = e.target;
+    chooseActiveCommander(value);
+  }
+
+  const formatOptions = () => {
+    return Object.keys(commanderData).map((key) => ({
+      label: commanderData[key].info.name,
+      value: commanderData[key].info.fid
+    }));
+  }
 
   useEffect(() => {
     if (!activeCommander) return;
@@ -21,6 +34,8 @@ function CommanderTab({ commanderData }: any) {
 
     return () => clearInterval(intervalId);
   }, []);
+  
+  const options = formatOptions();
 
   return (
     <div className="CommanderTab flex justify-content-between align-items-center mb-3">
@@ -45,7 +60,15 @@ function CommanderTab({ commanderData }: any) {
             ))}
           </div>
         ) : (
-          <div></div>
+          <div>
+            <Dropdown 
+              value={commander?.info?.fid} 
+              onChange={onDropdownChange}
+              options={options}
+              optionLabel="label"
+              className="w-full md:w-14rem uppercase"
+            />
+          </div>
         )}
 
       </div>
