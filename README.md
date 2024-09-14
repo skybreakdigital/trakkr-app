@@ -2,7 +2,7 @@
 
 This app is in Early Development. Trakkr was designed and developed to assist Elite Dangerous Commanders who are involved in `Wing Mining Mission` operations.
 
-Report all defects to `qore` on discord.
+Join our discord for support. [Trakkr Discord](https://discord.gg/DY7kUHdtdz)
 
 <img src="public/cover.png" alt="GitHub Logo" width="500"/>
 
@@ -17,6 +17,7 @@ Report all defects to `qore` on discord.
 - Themes
 
 ## Download
+
 Check the lastest release and download the .exe for use.
 
 ## Credits
@@ -33,8 +34,10 @@ Tested by
 - AlphaLovesYou
 
 ## Contribution
+
 All contributions should be branched from `develop`
 Please follow these naming conventions for branches:
+
 - **Feature branches**: `feature/branch-name`
 - **Bugfix branches**: `bugfix/branch-name`
 - **Hotfix branches**: `hotfix/branch-name`
