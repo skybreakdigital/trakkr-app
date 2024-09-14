@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 
 function MissionPage() {
-  const { activeCommander, fetchedAt, fetchMissionData, state }: any =
+  const { activeCommander, fetchedAt, fetchMissionData, state, loading }: any =
     useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
@@ -120,7 +120,7 @@ function MissionPage() {
       (total: number, mission: any) => total + (mission.Reward || 0),
       0
     );
-  }
+  };
 
   const calculateShareDate = () => {
     const allMissions = [...acceptedMissions, ...completedMissions];
@@ -194,7 +194,7 @@ function MissionPage() {
   }, [acceptedMissions, completedMissions]);
 
   return (
-    <div className="MissionPage">
+    <div className="MissionPage relative">
       <SectionTitle title="Wing Mining Missions" />
       <TabMenu menuItems={menuItems} onClick={onMenuClick} />
       <div className="flex gap-4">
@@ -205,7 +205,7 @@ function MissionPage() {
         ) : (
           <Config />
         )}
-        <div className="w-4 flex flex-column">
+        <div className="w-3 flex flex-column">
           <Stats
             statData={[
               {
@@ -241,17 +241,26 @@ function MissionPage() {
           )}
           <div className="my-3 flex justify-content-end align-items-center">
             <button
-              className="accent" 
+              className="accent"
               onClick={() => setBuilderVisible(true)}
               disabled={completedMissions.length < 10}
-            >Share Stack</button>
+            >
+              Share Stack
+            </button>
           </div>
         </div>
       </div>
-      <span className="text-xs uppercase absolute bottom-0 right-0 m-2">
-        Last update:{" "}
-        <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
-      </span>
+      <div className="text-xs uppercase absolute bottom-0 right-0 m-2 flex align-items-center gap-2">
+        {loading && (
+          <div className="spin">
+            <i className="fa-solid fa-spinner" />
+          </div>
+        )}
+        <div>
+          Last update:{" "}
+          <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
+        </div>
+      </div>
       <Dialog
         header="Share Stack"
         style={{ width: "50%" }}

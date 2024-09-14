@@ -93,7 +93,7 @@ function Config() {
   }, []);
 
   return (
-    <div className="Config w-8">
+    <div className="Config w-9">
       <div className="flex justify-content-between align-items-center p-3">
         <div className="text-md font-bold uppercase">Commodity Config</div>
         <div className="flex gap-2">

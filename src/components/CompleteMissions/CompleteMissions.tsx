@@ -4,7 +4,7 @@ import './CompleteMissions.scss';
 
 function CompleteMissions({ missions }: any) {
   return (
-    <div className="ActiveMissions w-8">
+    <div className="ActiveMissions w-9">
       <ul className="mission-list">
         <li className="mission-list-header w-full uppercase text-center">
           <div className="row-item w-5 px-1 text-left">Mission</div>
