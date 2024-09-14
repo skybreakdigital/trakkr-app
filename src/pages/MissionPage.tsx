@@ -120,7 +120,7 @@ function MissionPage() {
       (total: number, mission: any) => total + (mission.Reward || 0),
       0
     );
-  }
+  };
 
   const calculateShareDate = () => {
     const allMissions = [...acceptedMissions, ...completedMissions];
@@ -194,7 +194,7 @@ function MissionPage() {
   }, [acceptedMissions, completedMissions]);
 
   return (
-    <div className="MissionPage">
+    <div className="MissionPage relative">
       <SectionTitle title="Wing Mining Missions" />
       <TabMenu menuItems={menuItems} onClick={onMenuClick} />
       <div className="flex gap-4">
@@ -241,10 +241,12 @@ function MissionPage() {
           )}
           <div className="my-3 flex justify-content-end align-items-center">
             <button
-              className="accent" 
+              className="accent"
               onClick={() => setBuilderVisible(true)}
               disabled={completedMissions.length < 10}
-            >Share Stack</button>
+            >
+              Share Stack
+            </button>
           </div>
         </div>
       </div>
@@ -254,7 +256,10 @@ function MissionPage() {
             <i className="fa-solid fa-spinner" />
           </div>
         )}
-        <div>Last update: <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span></div>
+        <div>
+          Last update:{" "}
+          <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
+        </div>
       </div>
       <Dialog
         header="Share Stack"

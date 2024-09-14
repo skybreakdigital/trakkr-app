@@ -228,6 +228,7 @@ textarea {
 .spin {
   display: inline-block;
   animation: spin 1s linear infinite;
+  transform-origin: center;
 }
 
 @keyframes spin {

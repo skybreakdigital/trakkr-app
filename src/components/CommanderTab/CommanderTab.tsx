@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CommanderTab.scss";
 import { useCommanderState } from "../../context/Commander";
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown } from "primereact/dropdown";
 import dayjs from "dayjs";
 
 function CommanderTab({ commanderData }: any) {
@@ -13,14 +13,14 @@ function CommanderTab({ commanderData }: any) {
   const onDropdownChange = (e: any) => {
     const { value } = e.target;
     chooseActiveCommander(value);
-  }
+  };
 
   const formatOptions = () => {
     return Object.keys(commanderData).map((key) => ({
       label: commanderData[key].info.name,
       value: commanderData[key].info.fid
     }));
-  }
+  };
 
   useEffect(() => {
     if (!activeCommander) return;
@@ -34,7 +34,7 @@ function CommanderTab({ commanderData }: any) {
 
     return () => clearInterval(intervalId);
   }, []);
-  
+
   const options = formatOptions();
 
   return (
@@ -44,12 +44,13 @@ function CommanderTab({ commanderData }: any) {
           Choose Your Commander <i className="fa-solid fa-chevron-right pl-2" />
         </div>
         {Object.keys(commanderData).length <= 5 ? (
-          <div>
+          <div className="flex">
             {Object.keys(commanderData).map((key, index) => (
               <div
                 key={index}
-                className={`tab-item uppercase flex align-items-center ${key === commander?.info?.fid ? "active" : ""
-                  }`}
+                className={`tab-item uppercase flex align-items-center ${
+                  key === commander?.info?.fid ? "active" : ""
+                }`}
                 onClick={() => chooseActiveCommander(key)}
               >
                 {key === commander?.info?.fid && (
@@ -61,8 +62,8 @@ function CommanderTab({ commanderData }: any) {
           </div>
         ) : (
           <div>
-            <Dropdown 
-              value={commander?.info?.fid} 
+            <Dropdown
+              value={commander?.info?.fid}
               onChange={onDropdownChange}
               options={options}
               optionLabel="label"
@@ -70,7 +71,6 @@ function CommanderTab({ commanderData }: any) {
             />
           </div>
         )}
-
       </div>
 
       <div className="text-sm uppercase m-2 w-3 flex justify-content-end align-items-center gap-2">
