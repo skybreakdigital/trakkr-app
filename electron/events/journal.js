@@ -72,6 +72,19 @@ function sortJournal() {
                     }
 
                     switch(event) {
+                        case 'LoadGame':
+                            journalData[fid].info = {
+                                ...journalData[fid].info,
+                                ship: parsedEntry.Ship_Localised,
+                                credits: parsedEntry.Credits
+                            }
+                            break;
+                        case 'ShipyardSwap':
+                            journalData[fid].info = {
+                                ...journalData[fid].info,
+                                ship: parsedEntry.ShipType_Localised,
+                            }
+                            break;
                         case 'Commander':
                             journalData[fid].info = {
                                 ...journalData[fid].info,
@@ -81,7 +94,6 @@ function sortJournal() {
                         case 'Loadout':
                             journalData[fid].info = {
                                 ...journalData[fid].info,
-                                ship: parsedEntry.Ship,
                                 cargo: parsedEntry.CargoCapacity
                             }
                             break;

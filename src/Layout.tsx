@@ -13,14 +13,31 @@ function Layout() {
   const [commanderData, setCommanderData]: any = useState({});
   const [commander, setCommander]: any = useState({});
 
+  const sortCommanders = (commanderData: any) => {
+    const sortedEntries = Object.entries(commanderData)
+      .sort(([keyA], [keyB]) => {
+        const numA = parseInt(keyA.slice(1), 10);
+        const numB = parseInt(keyB.slice(1), 10);
+
+        // Sort numerically
+        return numA - numB;
+      });
+
+    return sortedEntries.reduce((obj: any, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {});
+  }
+
   useEffect(() => {
-    if(!missionData) return;
-    
-    setCommanderData(missionData);
+    if (!missionData) return;
+
+    const sortedCommanderData = sortCommanders(missionData);
+    setCommanderData(sortedCommanderData);
   }, [missionData]);
 
   useEffect(() => {
-    if(!activeCommander) return;
+    if (!activeCommander) return;
 
     setCommander(activeCommander);
   }, [activeCommander]);
@@ -29,22 +46,18 @@ function Layout() {
     navigate('/main/missions');
   }, []);
 
-  if(loading) {
-    return <div>loading...</div>
-  }
-
   return (
-      <div className="Layout flex">
-        <NavMenu />
-        <div className='p-3 flex flex-column w-full content'>
-          {missionData && (
-            <CommanderTab commanderData={commanderData} />
-          )}
-          
-          <h2 className='m-0'>Welcome back, <span className="uppercase">{commander?.info?.name}</span></h2>
-          <Outlet />
-        </div>
+    <div className="Layout flex">
+      <NavMenu />
+      <div className='p-3 flex flex-column w-full content'>
+        {missionData && (
+          <CommanderTab commanderData={commanderData} />
+        )}
+
+        <h2 className='m-0'>Welcome back, <span className="uppercase">{commander?.info?.name}</span></h2>
+        <Outlet />
       </div>
+    </div>
   )
 }
 

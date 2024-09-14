@@ -64,6 +64,15 @@ ul li > div {
 .bg-primary {
   background-color: $gray2;
 }
+.alert {
+  background: rgba($red, .20);
+  border: 1px solid $red;
+  padding: .5rem;
+  margin-top: 1rem;
+  .fa-solid {
+    color: $red;
+  }
+}
 
 button {
   border: 0;
@@ -79,6 +88,9 @@ button {
     &:hover {
       background: rgba($gray-light, .75);
     }
+  }
+  &:disabled {
+    opacity: .35;
   }
 }
 
@@ -156,6 +168,32 @@ button {
   width: 100%;
 }
 
+.p-dropdown {
+  background: $gray-dark;
+  border: 1px solid $gray-light;
+  padding: .25rem;
+  &:focus {
+    border: 1px solid var(--accent); // Highlight border on focus
+    outline: none;
+    box-shadow: 0 0 5px rgba(var(--accent), 0.5); // Optional shadow for focus
+  }
+}
+.p-dropdown-items-wrapper {
+  background: $gray-dark;
+  border: 1px solid $gray-light;
+  margin-top: 5px;
+  .p-dropdown-item {
+    padding: 5px;
+    text-transform: uppercase;
+    &.p-highlight {
+      color: var(--accent);
+    }
+    &:hover {
+      background: $gray;
+    }
+  }
+}
+
 input {
   background: $gray-dark;
   border: 1px solid $gray-light;
@@ -165,4 +203,60 @@ input {
     outline: none;
     border-color: var(--accent);
   }
+}
+
+textarea {
+  background: $gray-dark;
+  border: 1px solid $gray-light;
+  margin: 0;
+}
+
+.p-dialog {
+  background: $gray2;
+  padding: 1rem;
+  border: 1px solid $gray-light;
+  .p-dialog-header {
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+.p-dialog-mask {
+  background-color: rgba(0,0,0,.75);
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 10px;
+  padding: 0 1rem;
+  margin: 10px;
+}
+/* Track */
+
+::-webkit-scrollbar-track {
+  box-shadow: none;
+  background: $gray-dark;
+}
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+  background: $gray;
+  border-radius: 10px;
+  border: 3px solid $gray-dark;
+}
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+  // background: $blue;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Dialog } from "primereact/dialog";
 import ActiveMissions from "../components/ActiveMissions/ActiveMissions";
 import CompleteMissions from "../components/CompleteMissions/CompleteMissions";
 import TabMenu from "../components/TabMenu/TabMenu";
@@ -11,9 +12,10 @@ import { useCommanderState } from "../context/Commander";
 import Empty from "../components/Empty/Empty";
 import Config from "../components/Config/Config";
 import dayjs from "dayjs";
+import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 
 function MissionPage() {
-  const { activeCommander, fetchedAt, fetchMissionData, state }: any =
+  const { activeCommander, fetchedAt, fetchMissionData, state, loading }: any =
     useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
@@ -26,7 +28,7 @@ function MissionPage() {
   const [commodities, setCommodities]: any = useState({});
   const [commodityConfig, setCommodityConfig]: any = useState({});
   const [totalInvestment, setTotalInvestment]: any = useState(0);
-  const [totalProfit, setTotalProfit]: any = useState(0);
+  const [builderVisible, setBuilderVisible]: any = useState(false);
 
   const onMenuClick = (updatedMenu: any) => {
     setMenuItems(updatedMenu);
@@ -113,6 +115,13 @@ function MissionPage() {
     return acceptedValue + completedValue;
   };
 
+  const calculateCompletedMissionValue = () => {
+    return completedMissions.reduce(
+      (total: number, mission: any) => total + (mission.Reward || 0),
+      0
+    );
+  };
+
   const calculateShareDate = () => {
     const allMissions = [...acceptedMissions, ...completedMissions];
 
@@ -125,12 +134,27 @@ function MissionPage() {
     }, null);
   };
 
+  const handleStackType = () => {
+    const stationCount: { [key: string]: number } = {};
+
+    completedMissions.forEach((mission: any) => {
+      const station = mission.DestinationStation;
+      if (station in stationCount) {
+        stationCount[station] += 1;
+      } else {
+        stationCount[station] = 1;
+      }
+    });
+
+    return stationCount;
+  };
+
   useEffect(() => {
     fetchMissionData();
   }, []);
 
   useEffect(() => {
-    if(!state || state && !state.commodityConfig) return;
+    if (!state || (state && !state.commodityConfig)) return;
 
     setCommodityConfig(state.commodityConfig);
   }, [state]);
@@ -165,12 +189,12 @@ function MissionPage() {
 
     const { sortedCommodities, investment } =
       calculateCommodities(commodityConfig);
-      setCommodities(sortedCommodities);
-      setTotalInvestment(investment);
+    setCommodities(sortedCommodities);
+    setTotalInvestment(investment);
   }, [acceptedMissions, completedMissions]);
 
   return (
-    <div className="MissionPage">
+    <div className="MissionPage relative">
       <SectionTitle title="Wing Mining Missions" />
       <TabMenu menuItems={menuItems} onClick={onMenuClick} />
       <div className="flex gap-4">
@@ -181,7 +205,7 @@ function MissionPage() {
         ) : (
           <Config />
         )}
-        <div className="w-4 flex flex-column">
+        <div className="w-3 flex flex-column">
           <Stats
             statData={[
               {
@@ -215,12 +239,45 @@ function MissionPage() {
           ) : (
             <Empty message="No Mission Data. Evaluation could not be completed.." />
           )}
+          <div className="my-3 flex justify-content-end align-items-center">
+            <button
+              className="accent"
+              onClick={() => setBuilderVisible(true)}
+              disabled={completedMissions.length < 10}
+            >
+              Share Stack
+            </button>
+          </div>
         </div>
       </div>
-      <span className="text-xs uppercase absolute bottom-0 right-0 m-2">
-        Last update:{" "}
-        <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
-      </span>
+      <div className="text-xs uppercase absolute bottom-0 right-0 m-2 flex align-items-center gap-2">
+        {loading && (
+          <div className="spin">
+            <i className="fa-solid fa-spinner" />
+          </div>
+        )}
+        <div>
+          Last update:{" "}
+          <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
+        </div>
+      </div>
+      <Dialog
+        header="Share Stack"
+        style={{ width: "50%" }}
+        visible={builderVisible}
+        onHide={() => {
+          if (!builderVisible) return;
+          setBuilderVisible(false);
+        }}
+      >
+        <MessageBuilder
+          stackData={{
+            size: completedMissions.length,
+            value: calculateCompletedMissionValue(),
+            type: handleStackType()
+          }}
+        />
+      </Dialog>
     </div>
   );
 }

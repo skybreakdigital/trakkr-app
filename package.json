@@ -2,7 +2,7 @@
   "name": "TrakkrApp",
   "description": "An Elite Dangerous Mission Tracker Tool",
   "private": true,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Dkter Roc",
   "main": "./electron/main.js",
   "homepage": "./",
@@ -11,7 +11,7 @@
     "build": "vite build && npm run electron-pack",
     "serve": "vite preview",
     "electron-dev": "electron .",
-    "electron-pack": "electron-builder",
+    "electron-pack": "electron-builder --publish=never",
     "electron-prep": "xcopy electron\\main.js dist\\electron\\main.js && xcopy electron\\preload.js dist\\electron\\preload.js"
   },
   "dependencies": {
