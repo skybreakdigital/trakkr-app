@@ -28,20 +28,26 @@ function CommanderTab({ commanderData }: any) {
         <div className="uppercase text-xs opacity-50">
           Choose Your Commander <i className="fa-solid fa-chevron-right pl-2" />
         </div>
-        {Object.keys(commanderData).map((key, index) => (
-          <div
-            key={index}
-            className={`tab-item uppercase flex align-items-center ${
-              key === commander?.info?.fid ? "active" : ""
-            }`}
-            onClick={() => chooseActiveCommander(key)}
-          >
-            {key === commander?.info?.fid && (
-              <i className="fa-solid fa-user text-xs mt-1 mr-2" />
-            )}
-            <div>{commanderData[key].info?.name}</div>
+        {Object.keys(commanderData).length <= 5 ? (
+          <div>
+            {Object.keys(commanderData).map((key, index) => (
+              <div
+                key={index}
+                className={`tab-item uppercase flex align-items-center ${key === commander?.info?.fid ? "active" : ""
+                  }`}
+                onClick={() => chooseActiveCommander(key)}
+              >
+                {key === commander?.info?.fid && (
+                  <i className="fa-solid fa-user text-xs mt-1 mr-2" />
+                )}
+                <div>{commanderData[key].info?.name}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div></div>
+        )}
+
       </div>
 
       <div className="text-sm uppercase m-2 w-3 flex justify-content-end align-items-center gap-2">
