@@ -13,6 +13,7 @@ import Empty from "../components/Empty/Empty";
 import Config from "../components/Config/Config";
 import dayjs from "dayjs";
 import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
+import { Dropdown } from "primereact/dropdown";
 
 function MissionPage() {
   const { activeCommander, fetchedAt, fetchMissionData, state, loading }: any =
@@ -29,6 +30,7 @@ function MissionPage() {
   const [commodityConfig, setCommodityConfig]: any = useState({});
   const [totalInvestment, setTotalInvestment]: any = useState(0);
   const [builderVisible, setBuilderVisible]: any = useState(false);
+  const [commodityOption, setCommodityOption]: any = useState("All");
 
   const onMenuClick = (updatedMenu: any) => {
     setMenuItems(updatedMenu);
@@ -56,51 +58,151 @@ function MissionPage() {
     return accepetedCount + completedCount;
   };
 
-  const calculateCommodities = (commodityConfig: any) => {
-    const commoditiesMap: any = {};
-    let investment: number = 0;
+  const calculateCommodities = (
+    acceptedMissions: any[],
+    completedMissions: any[],
+    commodityConfig: any
+  ) => {
+    const commoditiesMap: Record<
+      string,
+      Record<string, { delivered: number; count: number; value: number }>
+    > = {};
+    let totalInvestment = 0;
 
-    // Helper function to accumulate commodities
+    // Helper function to accumulate commodities by station
     const accumulateCommodities = (missions: any[]) => {
       missions.forEach((mission) => {
-        if (mission.Commodity_Localised && mission.Count) {
-          if (!commoditiesMap[mission.Commodity_Localised]) {
-            commoditiesMap[mission.Commodity_Localised] = {
+        const {
+          Commodity_Localised,
+          Count,
+          ItemsDelivered = 0,
+          DestinationStation
+        } = mission;
+
+        if (Commodity_Localised && Count && DestinationStation) {
+          const commodityName = Commodity_Localised.toLowerCase();
+
+          // Ensure the station exists in the commoditiesMap
+          if (!commoditiesMap[DestinationStation]) {
+            commoditiesMap[DestinationStation] = {};
+          }
+
+          // Ensure the commodity exists for the station
+          if (!commoditiesMap[DestinationStation][commodityName]) {
+            commoditiesMap[DestinationStation][commodityName] = {
               delivered: 0,
               count: 0,
               value: 0
             };
           }
 
-          const itemsDelivered = mission.ItemsDelivered || 0;
-
-          commoditiesMap[mission.Commodity_Localised].delivered +=
-            itemsDelivered;
-          commoditiesMap[mission.Commodity_Localised].count += mission.Count;
-          commoditiesMap[mission.Commodity_Localised].value +=
-            mission.Count *
-            (commodityConfig[mission.Commodity_Localised.toLowerCase()] || 0);
+          // Update the data for the specific station
+          commoditiesMap[DestinationStation][commodityName].delivered +=
+            ItemsDelivered;
+          commoditiesMap[DestinationStation][commodityName].count += Count;
+          commoditiesMap[DestinationStation][commodityName].value +=
+            Count * (commodityConfig[commodityName] || 0);
         }
       });
     };
 
-    // Process accepted and completed missions
+    // Process accepted and completed missions for each station
     accumulateCommodities([...acceptedMissions, ...completedMissions]);
 
-    const sortedCommodities = Object.entries(commoditiesMap)
-      .map(([commodity, data]: any) => {
-        investment += data.value;
-        return {
-          commodity,
-          delivered: data.delivered,
-          count: data.count,
-          value: data.value
-        };
-      })
-      .sort((a, b) => b.count - a.count);
+    // Now accumulate for the "All" section based on station data
+    Object.entries(commoditiesMap).forEach(([station, commodities]) => {
+      if (station !== "All") {
+        Object.entries(commodities).forEach(([commodity, data]) => {
+          if (!commoditiesMap["All"]) {
+            commoditiesMap["All"] = {};
+          }
+          if (!commoditiesMap["All"][commodity]) {
+            commoditiesMap["All"][commodity] = {
+              delivered: 0,
+              count: 0,
+              value: 0
+            };
+          }
 
-    return { sortedCommodities, investment };
+          commoditiesMap["All"][commodity].delivered += data.delivered;
+          commoditiesMap["All"][commodity].count += data.count;
+          commoditiesMap["All"][commodity].value += data.value;
+        });
+      }
+    });
+
+    // Sort and calculate total investment
+    const sortedCommoditiesByStation = Object.entries(commoditiesMap).reduce(
+      (acc, [station, commodities]) => {
+        const sortedCommodities = Object.entries(commodities)
+          .map(([commodity, data]) => ({
+            commodity,
+            delivered: data.delivered,
+            count: data.count,
+            value: data.value
+          }))
+          .sort((a, b) => b.count - a.count);
+
+        acc[station] = sortedCommodities;
+        if (station === "All") {
+          totalInvestment = sortedCommodities.reduce(
+            (sum, item) => sum + item.value,
+            0
+          );
+        }
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
+
+    return { sortedCommoditiesByStation, totalInvestment };
   };
+
+  // const calculateCommodities = (commodityConfig: any) => {
+  //   const commoditiesMap: any = {};
+  //   let investment: number = 0;
+
+  //   // Helper function to accumulate commodities
+  //   const accumulateCommodities = (missions: any[]) => {
+  //     missions.forEach((mission) => {
+  //       if (mission.Commodity_Localised && mission.Count) {
+  //         if (!commoditiesMap[mission.Commodity_Localised]) {
+  //           commoditiesMap[mission.Commodity_Localised] = {
+  //             delivered: 0,
+  //             count: 0,
+  //             value: 0
+  //           };
+  //         }
+
+  //         const itemsDelivered = mission.ItemsDelivered || 0;
+
+  //         commoditiesMap[mission.Commodity_Localised].delivered +=
+  //           itemsDelivered;
+  //         commoditiesMap[mission.Commodity_Localised].count += mission.Count;
+  //         commoditiesMap[mission.Commodity_Localised].value +=
+  //           mission.Count *
+  //           (commodityConfig[mission.Commodity_Localised.toLowerCase()] || 0);
+  //       }
+  //     });
+  //   };
+
+  //   // Process accepted and completed missions
+  //   accumulateCommodities([...acceptedMissions, ...completedMissions]);
+
+  //   const sortedCommodities = Object.entries(commoditiesMap)
+  //     .map(([commodity, data]: any) => {
+  //       investment += data.value;
+  //       return {
+  //         commodity,
+  //         delivered: data.delivered,
+  //         count: data.count,
+  //         value: data.value
+  //       };
+  //     })
+  //     .sort((a, b) => b.count - a.count);
+
+  //   return { sortedCommodities, investment };
+  // };
 
   const calculateMissionValue = () => {
     const acceptedValue = acceptedMissions.reduce(
@@ -132,6 +234,12 @@ function MissionPage() {
       }
       return earliest;
     }, null);
+  };
+
+  const onCommodityOptionChange = (e: any) => {
+    const { value } = e.target;
+
+    setCommodityOption(value);
   };
 
   const handleStackType = () => {
@@ -187,10 +295,14 @@ function MissionPage() {
       })
     );
 
-    const { sortedCommodities, investment } =
-      calculateCommodities(commodityConfig);
-    setCommodities(sortedCommodities);
-    setTotalInvestment(investment);
+    const { sortedCommoditiesByStation, totalInvestment } =
+      calculateCommodities(
+        acceptedMissions,
+        completedMissions,
+        commodityConfig
+      );
+    setCommodities(sortedCommoditiesByStation);
+    setTotalInvestment(totalInvestment);
   }, [acceptedMissions, completedMissions]);
 
   return (
@@ -217,15 +329,36 @@ function MissionPage() {
             ]}
           />
 
-          <SectionTitle title="Ship Specs" />
-          <ShipSpecs />
+          <div className="my-3">
+            <SectionTitle title="Ship Specs" />
+            <ShipSpecs />
+          </div>
 
-          <SectionTitle title="Commodities" />
-          {checkHasMissions() ? (
-            <Commodity commodityData={commodities} />
-          ) : (
-            <Empty message="No Mission Data. Commodities could not be completed.." />
-          )}
+          <div className="my-3">
+            <div className="flex justify-content-between align-items-center">
+              <SectionTitle title="Commodities" />
+              <div className="w-6">
+                {commodities && (
+                  <Dropdown
+                    value={commodityOption}
+                    options={Object.keys(commodities)
+                      .sort((a, b) =>
+                        a === "All" ? -1 : b === "All" ? 1 : a.localeCompare(b)
+                      )
+                      .map((key) => key)}
+                    onChange={onCommodityOptionChange}
+                    className="w-full uppercase"
+                  />
+                )}
+              </div>
+            </div>
+
+            {checkHasMissions() ? (
+              <Commodity commodityData={commodities[commodityOption]} />
+            ) : (
+              <Empty message="No Mission Data. Commodities could not be completed.." />
+            )}
+          </div>
 
           <SectionTitle title="Evaluation" />
           {checkHasMissions() ? (
