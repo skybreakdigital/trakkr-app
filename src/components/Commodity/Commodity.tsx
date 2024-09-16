@@ -16,8 +16,6 @@ function Commodity({ commodityData }: any) {
     setCargo(activeCommander.info.cargo);
   }, [activeCommander]);
 
-  console.log("commodities: ", commodityData);
-
   return (
     <div className="Commodity">
       <ul className="mission-list m-0">

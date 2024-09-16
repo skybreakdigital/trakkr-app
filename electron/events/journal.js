@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
+let currentWatcher = null;
+
 function readJournalDir() {
     return path.join(
         process.env.HOME || process.env.USERPROFILE || '',
@@ -72,33 +74,30 @@ function sortJournal() {
                     }
 
                     switch(event) {
-                        case 'LoadGame':
+                        case 'LoadGame': // When a user loads into the game
                             journalData[fid].info = {
                                 ...journalData[fid].info,
                                 ship: parsedEntry.Ship_Localised,
                                 credits: parsedEntry.Credits
                             }
                             break;
-                        case 'ShipyardSwap':
+                        case 'ShipyardSwap': // When a user switches their ship
                             journalData[fid].info = {
                                 ...journalData[fid].info,
                                 ship: parsedEntry.ShipType_Localised,
                             }
                             break;
-                        case 'Commander':
+                        case 'Commander': // A users Commander info
                             journalData[fid].info = {
                                 ...journalData[fid].info,
                                 name: parsedEntry.Name
                             }
                             break;
-                        case 'Loadout':
+                        case 'Loadout': // A users Ship info
                             journalData[fid].info = {
                                 ...journalData[fid].info,
                                 cargo: parsedEntry.CargoCapacity
                             }
-                            break;
-                        case 'Credit':
-                            console.log('Credits: ', parsedEntry.Credit);
                             break;
                         default:
                             break;
@@ -157,23 +156,77 @@ function readJournalFiles() {
     return journalFiles;
 }
 
+// function watchJournalChanges(mainWindow) {
+//     const journalDir = readJournalDir();
+
+//     const lastJournalFile = readLastJournalFile();
+
+//     if (lastJournalFile) {
+//         fs.watch(path.join(journalDir, lastJournalFile), (eventType, filename) => {
+//             if (eventType === 'change') {
+//                 console.log(`File ${filename} has been updated.`);
+//                 // Notify React of the file change
+//                 if(mainWindow && mainWindow.webContents) {
+//                     mainWindow.webContents.send('journal-file-updated');
+//                 }
+//             }
+//         });
+//     }
+// }
+
 function watchJournalChanges(mainWindow) {
-    const journalDir = readJournalDir();
+    try {
+        const journalDir = readJournalDir();
 
-    const lastJournalFile = readLastJournalFile();
+        // Watch the entire journal directory
+        fs.watch(journalDir, (eventType, filename) => {
+            if (eventType === 'rename' && filename) {
+                // A new file might have been created
+                const newJournalFile = readLastJournalFile(); // Re-read the last journal file
 
-    if (lastJournalFile) {
-        fs.watch(path.join(journalDir, lastJournalFile), (eventType, filename) => {
+                if (newJournalFile) {
+                    console.log(`New journal file detected: ${newJournalFile}`);
+                    updateFileWatcher(journalDir, newJournalFile, mainWindow);
+                }
+            }
+        });
+
+        // Initially watch the current last journal file
+        const lastJournalFile = readLastJournalFile();
+        if (lastJournalFile) {
+            updateFileWatcher(journalDir, lastJournalFile, mainWindow);
+        }
+    } catch (error) {
+        console.error('Error watching journal changes:', error);
+    }
+}
+
+function updateFileWatcher(journalDir, journalFile, mainWindow) {
+    const filePath = path.join(journalDir, journalFile);
+
+    // Close the previous watcher if it exists
+    if (currentWatcher) {
+        currentWatcher.close();
+    }
+
+    // Ensure the new file exists before setting up the watcher
+    if (fs.existsSync(filePath)) {
+        currentWatcher = fs.watch(filePath, (eventType, filename) => {
             if (eventType === 'change') {
                 console.log(`File ${filename} has been updated.`);
                 // Notify React of the file change
-                if(mainWindow && mainWindow.webContents) {
+                if (mainWindow && mainWindow.webContents) {
                     mainWindow.webContents.send('journal-file-updated');
                 }
             }
         });
+
+        console.log(`Watching for changes on: ${filePath}`);
+    } else {
+        console.error(`File ${filePath} does not exist.`);
     }
 }
+
 
 module.exports = {
     sortJournal,

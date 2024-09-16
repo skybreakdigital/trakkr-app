@@ -35,7 +35,6 @@ export const CommanderProvider = ({ children }: any) => {
     try {
       setLoading(true);
       const data: any = await window.electron.getMissionDetails();
-      console.log("fetched mission data: ", data);
       setMissionData(data);
       setFetchedAt(new Date());
     } catch (error) {
