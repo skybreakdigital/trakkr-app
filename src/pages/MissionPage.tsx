@@ -16,7 +16,7 @@ import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 import { Dropdown } from "primereact/dropdown";
 
 function MissionPage() {
-  const { activeCommander, fetchedAt, fetchMissionData, state, loading }: any =
+  const { activeCommander, fetchMissionData, state }: any =
     useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
@@ -381,17 +381,6 @@ function MissionPage() {
               Share Stack
             </button>
           </div>
-        </div>
-      </div>
-      <div className="text-xs uppercase absolute bottom-0 right-0 m-2 flex align-items-center gap-2">
-        {loading && (
-          <div className="spin">
-            <i className="fa-solid fa-spinner" />
-          </div>
-        )}
-        <div>
-          Last update:{" "}
-          <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
         </div>
       </div>
       <Dialog
