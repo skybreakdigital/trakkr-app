@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCommanderState } from "../../context/Commander";
+import { formatNumber } from "../../helpers/formatNumber";
 
 function Commodity({ commodityData }: any) {
   const { activeCommander }: any = useCommanderState();
@@ -40,8 +41,8 @@ function Commodity({ commodityData }: any) {
               </div>
               <div className="text-sm flex justify-content-between">
                 <div>
-                  <span className="opacity-50">{data.delivered}</span> /{" "}
-                  {data.count} -
+                  <span className="opacity-50">{formatNumber(data.delivered)}</span> /{" "}
+                  {formatNumber(data.count)} -
                   <span>
                     {" "}
                     {Math.ceil((data.delivered / data.count) * 100)}% Completed
