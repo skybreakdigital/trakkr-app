@@ -6,7 +6,7 @@ const CommanderContext = createContext({});
 export const useCommanderState = () => useContext(CommanderContext);
 
 export const CommanderProvider = ({ children }: any) => {
-  const [missionData, setMissionData]: any = useState({});
+  const [missionData, setMissionData]: any = useState(null);
   const [activeCommander, setActiveCommander]: any = useState(null);
   const [fetchedAt, setFetchedAt]: any = useState(null);
   const [state, setState]: any = useState({});
@@ -73,6 +73,22 @@ export const CommanderProvider = ({ children }: any) => {
     }
   };
 
+  const sortCommanders = (commanderData: any) => {
+    const sortedEntries = Object.entries(commanderData)
+      .sort(([keyA], [keyB]) => {
+        const numA = parseInt(keyA.slice(1), 10);
+        const numB = parseInt(keyB.slice(1), 10);
+
+        // Sort numerically
+        return numA - numB;
+      });
+
+    return sortedEntries.reduce((obj: any, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {});
+  }
+
   useEffect(() => {
     getTheme();
     fetchState();
@@ -100,11 +116,19 @@ export const CommanderProvider = ({ children }: any) => {
 
       const { activeCommander: commander } = data;
 
-      const cmdrFIDs = Object.keys(missionData);
+      const commanderData = sortCommanders(missionData);
+      const cmdrFIDs = Object.keys(commanderData)
+        .sort(([keyA], [keyB]) => {
+          const numA = parseInt(keyA.slice(1), 10);
+          const numB = parseInt(keyB.slice(1), 10);
+
+          // Sort numerically
+          return numA - numB;
+        });
 
       if (cmdrFIDs.length > 0) {
-        if (commander) {
-          const { fid: activeFID } = commander.info;
+        if (commander.info) {
+          const { fid: activeFID } = commander?.info;
 
           if (activeFID && cmdrFIDs.includes(activeFID)) {
             setCommander(activeFID);

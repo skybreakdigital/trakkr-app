@@ -16,6 +16,11 @@ function sortJournal() {
     let journalData = {};
     const journalDir = readJournalDir();
     const files = readJournalFiles();
+    const cargoFile = readCargoFile();
+
+    
+    const cargoFileData = fs.readFileSync(path.join(journalDir, cargoFile[0]), 'utf-8');
+    const cargoData = JSON.parse(cargoFileData);
 
     files.forEach((file) => {
         const fileData = fs.readFileSync(path.join(journalDir, file), 'utf-8');
@@ -113,7 +118,10 @@ function sortJournal() {
         });
     });
 
-    return journalData;
+    return {
+        journalData,
+        cargoData
+    };
 }
 
 function readLastJournalFile() {
@@ -151,6 +159,25 @@ function readJournalFiles() {
         const fileModifiedTime = new Date(stats.mtime);
 
         return file.startsWith('Journal') && file.endsWith('.log') && fileModifiedTime >= oneWeekAgo;
+    });
+
+    return journalFiles;
+}
+
+function readCargoFile() {
+    const journalDir = readJournalDir();
+
+    const files = fs.readdirSync(journalDir);
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 14);
+
+    const journalFiles = files.filter((file) => {
+        const filePath = path.join(journalDir, file)
+        const stats = fs.statSync(filePath);
+        const fileModifiedTime = new Date(stats.mtime);
+
+        return file.startsWith('Cargo') && fileModifiedTime >= oneWeekAgo;
     });
 
     return journalFiles;

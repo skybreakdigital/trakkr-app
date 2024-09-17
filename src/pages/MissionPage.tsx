@@ -46,11 +46,11 @@ function MissionPage() {
   };
 
   const calculateTonnage = () => {
-    const accepetedCount = acceptedMissions.reduce(
+    const accepetedCount = acceptedMissions?.reduce(
       (total: number, mission: any) => total + (mission.Count || 0),
       0
     );
-    const completedCount = completedMissions.reduce(
+    const completedCount = completedMissions?.reduce(
       (total: number, mission: any) => total + (mission.Count || 0),
       0
     );
@@ -157,52 +157,6 @@ function MissionPage() {
 
     return { sortedCommoditiesByStation, totalInvestment };
   };
-
-  // const calculateCommodities = (commodityConfig: any) => {
-  //   const commoditiesMap: any = {};
-  //   let investment: number = 0;
-
-  //   // Helper function to accumulate commodities
-  //   const accumulateCommodities = (missions: any[]) => {
-  //     missions.forEach((mission) => {
-  //       if (mission.Commodity_Localised && mission.Count) {
-  //         if (!commoditiesMap[mission.Commodity_Localised]) {
-  //           commoditiesMap[mission.Commodity_Localised] = {
-  //             delivered: 0,
-  //             count: 0,
-  //             value: 0
-  //           };
-  //         }
-
-  //         const itemsDelivered = mission.ItemsDelivered || 0;
-
-  //         commoditiesMap[mission.Commodity_Localised].delivered +=
-  //           itemsDelivered;
-  //         commoditiesMap[mission.Commodity_Localised].count += mission.Count;
-  //         commoditiesMap[mission.Commodity_Localised].value +=
-  //           mission.Count *
-  //           (commodityConfig[mission.Commodity_Localised.toLowerCase()] || 0);
-  //       }
-  //     });
-  //   };
-
-  //   // Process accepted and completed missions
-  //   accumulateCommodities([...acceptedMissions, ...completedMissions]);
-
-  //   const sortedCommodities = Object.entries(commoditiesMap)
-  //     .map(([commodity, data]: any) => {
-  //       investment += data.value;
-  //       return {
-  //         commodity,
-  //         delivered: data.delivered,
-  //         count: data.count,
-  //         value: data.value
-  //       };
-  //     })
-  //     .sort((a, b) => b.count - a.count);
-
-  //   return { sortedCommodities, investment };
-  // };
 
   const calculateMissionValue = () => {
     const acceptedValue = acceptedMissions.reduce(
@@ -322,9 +276,9 @@ function MissionPage() {
             statData={[
               {
                 label: "Total Missions",
-                value: acceptedMissions.length + completedMissions.length
+                value: acceptedMissions?.length + completedMissions?.length
               },
-              { label: "Fulfilled", value: completedMissions.length },
+              { label: "Fulfilled", value: completedMissions?.length },
               { label: "Total Tonnage", value: calculateTonnage() }
             ]}
           />
