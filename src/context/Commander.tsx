@@ -81,7 +81,10 @@ export const CommanderProvider = ({ children }: any) => {
     // Updates in real-time when the game write to the journal file
     window.electron.on("journal-file-updated", () => {
       setLoading(true);
-      fetchMissionData();
+
+      setTimeout(() => {
+        fetchMissionData();
+      }, 1000);
     });
 
     return () => {

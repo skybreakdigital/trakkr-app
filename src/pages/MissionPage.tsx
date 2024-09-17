@@ -307,7 +307,7 @@ function MissionPage() {
 
   return (
     <div className="MissionPage relative">
-      <SectionTitle title="Wing Mining Missions" />
+      <SectionTitle title="Wing Missions" />
       <TabMenu menuItems={menuItems} onClick={onMenuClick} />
       <div className="flex gap-4">
         {showUI("Active") ? (

@@ -14,7 +14,7 @@ function NavMenu() {
         },
         {
             label: 'Shares',
-            icon: 'fa-solid fa-users',
+            icon: 'fa-solid fa-crosshairs',
             hash: '#/main#/shares',
             url: '/main/shares',
             disabled: true
