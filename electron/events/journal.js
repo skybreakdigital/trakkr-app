@@ -18,9 +18,8 @@ function sortJournal() {
     const files = readJournalFiles();
     const cargoFile = readCargoFile();
 
-    
-    const cargoFileData = fs.readFileSync(path.join(journalDir, cargoFile[0]), 'utf-8');
-    const cargoData = JSON.parse(cargoFileData);
+    // const cargoFileData = fs.readFileSync(path.join(journalDir, cargoFile[0]), 'utf-8');
+    // const cargoData = JSON.parse(cargoFileData);
 
     files.forEach((file) => {
         const fileData = fs.readFileSync(path.join(journalDir, file), 'utf-8');
@@ -119,8 +118,7 @@ function sortJournal() {
     });
 
     return {
-        journalData,
-        cargoData
+        journalData
     };
 }
 
