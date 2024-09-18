@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useCommanderState } from "../../context/Commander";
 
 function TabMenu({ menuItems, onClick }: any) {
-  const { fetchMissionData, loading }: any = useCommanderState();
+  const { fetchMissionData, loading, fetchedAt }: any = useCommanderState();
 
   const [selected, setSelected] = useState({});
 
@@ -48,7 +48,11 @@ function TabMenu({ menuItems, onClick }: any) {
             </button>
           ))}
         </div>
-        <div>
+        <div className="text-xs">
+          <button>
+            Last update:{" "}
+            <span className="opacity-50">{dayjs(fetchedAt).fromNow()}</span>
+          </button>
           <button className="primary" onClick={onRefreshClick}>
             {loading ? (
               <i className="fa-solid fa-spinner spin" />
