@@ -42,7 +42,7 @@ function MissionPage() {
   };
 
   const checkHasMissions = () => {
-    return acceptedMissions.length + completedMissions.length > 0;
+    return acceptedMissions?.length + completedMissions?.length > 0;
   };
 
   const calculateTonnage = () => {
@@ -144,12 +144,12 @@ function MissionPage() {
           .sort((a, b) => b.count - a.count);
 
         acc[station] = sortedCommodities;
-        if (station === "All") {
-          totalInvestment = sortedCommodities.reduce(
-            (sum, item) => sum + item.value,
-            0
-          );
-        }
+     
+        totalInvestment = sortedCommodities.reduce(
+          (sum, item) => sum + item.value,
+          0
+        );
+        
         return acc;
       },
       {} as Record<string, any[]>
@@ -224,8 +224,8 @@ function MissionPage() {
   useEffect(() => {
     if (!activeCommander) return;
 
-    setAcceptedMissions(activeCommander.active);
-    setCompletedMissions(activeCommander.completed);
+    setAcceptedMissions(activeCommander.active.wmm);
+    setCompletedMissions(activeCommander.completed.wmm);
   }, [activeCommander]);
 
   useEffect(() => {

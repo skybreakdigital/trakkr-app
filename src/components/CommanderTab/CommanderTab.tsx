@@ -53,9 +53,6 @@ function CommanderTab({ commanderData }: any) {
                 }`}
                 onClick={() => chooseActiveCommander(key)}
               >
-                {key === commander?.info?.fid && (
-                  <i className="fa-solid fa-user text-xs mt-1 mr-2" />
-                )}
                 <div>{commanderData[key].info?.name}</div>
               </div>
             ))}

@@ -2,7 +2,7 @@
   "name": "TrakkrApp",
   "description": "An Elite Dangerous Mission Tracker Tool",
   "private": true,
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "Dkter Roc",
   "main": "./electron/main.js",
   "homepage": "./",

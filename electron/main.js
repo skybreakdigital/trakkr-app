@@ -78,9 +78,7 @@ app.whenReady().then(() => {
 
     const state = getState();
 
-    if (!state) {
-        createDefaultState();
-    }
+    createDefaultState(state);
 
     setTimeout(() => {
         splashWindow.close();
@@ -112,8 +110,7 @@ function createDefaultState(state) {
     }
 
     if ((state && !state.commodityConfig) ||
-        (state && Object.keys(state.commodityConfig).length === 0)
-    ) {
+        (state && Object.keys(state.commodityConfig).length === 0)) {
         // If commodity doesn't exist, set it with default config
         setState({
             commodityConfig: commodityData

@@ -14,7 +14,8 @@ async function getMissionDetails() {
         const twoWeeksAgo = new Date();
         twoWeeksAgo.setDate(now.getDate() - 14);
 
-        let cargoDepotMissions = [];
+        let cargoDepotTransactions = [];
+        let bountyTransactions = [];
 
         let completedMissions = {
             wmm: [],
@@ -45,7 +46,10 @@ async function getMissionDetails() {
             if (eventTimestamp >= twoWeeksAgo && eventTimestamp <= now) {
                 switch (item.event) {
                     case 'CargoDepot':
-                        cargoDepotMissions.push(item);
+                        cargoDepotTransactions.push(item);
+                        break;
+                    case 'Bounty':
+                        bountyTransactions.push(item);
                         break;
                     case 'MissionAccepted':
                         if (item.Name.includes('Mission_Mining') || 
@@ -94,7 +98,10 @@ async function getMissionDetails() {
         });
         
         const filteredActiveMissions = filterActiveMissions(acceptedMissions, completedMissions, abandonedMissions, failedMissions);
-        const allActiveMissions = updateMissionProgress(filteredActiveMissions, cargoDepotMissions);
+        // TODO: make this more WMM focus and conditional if there are cargoDepotTransactions
+        const allActiveMissions = updateMissionProgress(filteredActiveMissions, cargoDepotTransactions);
+        
+        // TODO: add a mission update function for massacre missions
 
         missionData[key].active = {
             wmm: allActiveMissions.wmm.filter((mission) => mission.ItemsDelivered !== mission.Count),
