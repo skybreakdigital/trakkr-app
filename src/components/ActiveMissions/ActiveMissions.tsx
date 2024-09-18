@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { formatNumber } from '../../helpers/formatNumber';
+import { formatCredit, formatNumber } from '../../helpers/formatNumber';
 import './ActiveMission.scss';
 import { useEffect, useState } from 'react';
 
@@ -65,9 +65,9 @@ function ActiveMissions({ missions }: any) {
               <progress value={data.Progress} max={1} />
             </div>
             <div className="row-item w-3 text-center px-1 py-2">{data.DestinationSystem} <i className="fa-solid fa-chevron-right text-xs mx-2" /> {data.DestinationStation}</div>
-            <div className="row-item w-2 text-center px-1 py-2">{data.Commodity_Localised} ({data.Count})</div>
+            <div className="row-item w-2 text-center px-1 py-2">{data.Commodity_Localised} ({formatNumber(data.Count)})</div>
             <div className="row-item w-3 text-center px-1 py-2">{dayjs(data.Expiry).format('ddd, MMM D, YYYY')} <span className={`${under24hour(data.Expiry) ? 'expires w-8' : 'w-8'}`}>{time[index]}</span></div>
-            <div className="row-item w-2 text-center px-1 py-2 text-accent">{formatNumber(data.Reward)}</div>
+            <div className="row-item w-2 text-center px-1 py-2 text-accent">{formatCredit(data.Reward)}</div>
           </li>
         ))}
         {!missions || (missions && missions.length === 0) && (

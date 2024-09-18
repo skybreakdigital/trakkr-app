@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { formatNumber } from '../../helpers/formatNumber';
+import { formatCredit, formatNumber } from '../../helpers/formatNumber';
 import './CompleteMissions.scss';
 
 function CompleteMissions({ missions }: any) {
@@ -21,9 +21,9 @@ function CompleteMissions({ missions }: any) {
               </div>
             </div>
             <div className="row-item w-2 text-center px-1 py-2">{data.DestinationStation}</div>
-            <div className="row-item w-2 text-center px-1 py-2">{data.Commodity_Localised} ({data.Count})</div>
+            <div className="row-item w-2 text-center px-1 py-2">{data.Commodity_Localised} ({formatNumber(data.Count)})</div>
             <div className="row-item w-2 text-center px-1 py-2">{dayjs(data.Expiry).format('ddd, MMM D, YYYY')}</div>
-            <div className="row-item w-2 text-center px-1 py-2 text-accent">{formatNumber(data.Reward)}</div>
+            <div className="row-item w-2 text-center px-1 py-2 text-accent">{formatCredit(data.Reward)}</div>
           </li>
         ))}
         {!missions || (missions && missions.length === 0) && (

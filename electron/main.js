@@ -23,12 +23,12 @@ function createSplashScreen() {
         },
     });
 
-    if(app.isPackaged) {
+    if (app.isPackaged) {
         splashWindow.loadFile(`${path.join(__dirname, '../dist/index.html')}`)
     } else {
         splashWindow.loadURL('http://localhost:5173');
     }
-    
+
 }
 
 function createWindow() {
@@ -36,9 +36,9 @@ function createWindow() {
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
-    const iconPath = process.platform === 'win32' 
-    ? path.join(__dirname, '../public/favicon-32x32.ico')
-    : path.join(__dirname, '../public/favicon-16x16.png');
+    const iconPath = process.platform === 'win32'
+        ? path.join(__dirname, '../public/favicon-32x32.ico')
+        : path.join(__dirname, '../public/favicon-16x16.png');
 
     mainWindow = new BrowserWindow({
         width,
@@ -51,8 +51,8 @@ function createWindow() {
         },
     });
 
-    
-    if(app.isPackaged) {
+
+    if (app.isPackaged) {
         const indexedPath = `${path.join(__dirname, '../dist/index.html')}`;
         mainWindow.loadFile(indexedPath).then(() => {
             mainWindow.webContents.executeJavaScript(`window.location.hash = '#/main';`);
@@ -63,23 +63,10 @@ function createWindow() {
     }
 
     mainWindow.on('ready-to-show', () => {
-        const state = getState();
-
-        // First check for user local state, then for commodityConfig
-        if(!state ||
-        (state && !state.commodityConfig) || 
-        (state && Object.keys(state.commodityConfig).length === 0)
-        ) {
-            // If commodity doesn't exist, set it with default config
-            setState({
-                commodityConfig: commodityData
-            });
-        }
-
         // Watch journals in realtime updates
-        watchJournalChanges(mainWindow);  
+        watchJournalChanges(mainWindow);
     });
-    
+
 
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -89,10 +76,16 @@ function createWindow() {
 app.whenReady().then(() => {
     createSplashScreen();
 
+    const state = getState();
+
+    if (!state) {
+        createDefaultState();
+    }
+
     setTimeout(() => {
         splashWindow.close();
         createWindow();
-        
+
     }, 3000);
 });
 
@@ -107,6 +100,32 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+function createDefaultState(state) {
+    // First check for user local state, then for commodityConfig
+    if (!state) {
+        setState({
+            theme: 'jet',
+            commodityConfig: {},
+            activeCommander: {}
+        });
+    }
+
+    if ((state && !state.commodityConfig) ||
+        (state && Object.keys(state.commodityConfig).length === 0)
+    ) {
+        // If commodity doesn't exist, set it with default config
+        setState({
+            commodityConfig: commodityData
+        });
+    }
+
+    if (!state || state && !state.userCargo) {
+        setState({
+            cargoData: {}
+        });
+    }
+}
 
 // REGISTER ELECTRON FUNCTIONS
 ipcMain.handle('get-mission-details', async () => {

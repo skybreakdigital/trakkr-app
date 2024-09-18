@@ -1,16 +1,20 @@
 const { sortJournal } = require('./journal');
+const { getState, setState, setCargoState } = require('../data/state');
 
-function getMissionDetails() {
-    const journalData = sortJournal();
+async function getMissionDetails() {
+    const { journalData } = sortJournal();
 
     let missionData = {};
 
-    Object.keys(journalData).forEach(key => {
+    const state = getState();
+
+    Object.keys(journalData).forEach((key) => {
         const data = journalData[key];
         const now = new Date();
         const twoWeeksAgo = new Date();
         twoWeeksAgo.setDate(now.getDate() - 14);
 
+        let marketBuyItems = [];
         let cargoDepotMissions = [];
         let completedMissions = [];
         let acceptedMissions = [];
@@ -26,6 +30,9 @@ function getMissionDetails() {
                 switch (item.event) {
                     case 'CargoDepot':
                         cargoDepotMissions.push(item);
+                        break;
+                    case 'MarketBuy':
+                        marketBuyItems.push(item);
                         break;
                     case 'MissionAccepted':
                         if (item.Name.includes('Mission_Mining') || item.Name.includes('Mission_Collect')) {
@@ -52,22 +59,15 @@ function getMissionDetails() {
                 }
             }
         });
-
+        
         const filteredActiveMissions = filterActiveMissions(acceptedMissions, completedMissions, abandonedMissions, failedMissions);
         const allMissionProgressCheck = updateMissionProgress(filteredActiveMissions, cargoDepotMissions);
 
         missionData[key].active = allMissionProgressCheck.filter((mission) => mission.ItemsDelivered !== mission.Count);
         missionData[key].completed = allMissionProgressCheck.filter((mission) => mission.ItemsDelivered === mission.Count);
         missionData[key].info = journalData[key].info;
+        missionData[key].cargo = state.cargoData?.[key] || [];
     });
-
-    // getMissionExec += 1;
-    // console.log('|--------------')
-    // console.log(`RUN #${getMissionExec} - GET MISSION DETAILS: `);
-    // // console.log('Active Missions: ', missionData.active.length);
-    // // console.log('Completed Missions: ', missionData.completed.length);
-    // console.log('|--------------')
-
     
     if(missionData) {
         Object.keys(missionData).forEach(key => {
