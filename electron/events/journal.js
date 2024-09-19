@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const ships = require('../data/json/ships.json');
 
 let currentWatcher = null;
 
@@ -85,12 +86,6 @@ function sortJournal() {
                                 credits: parsedEntry.Credits
                             }
                             break;
-                        case 'ShipyardSwap': // When a user switches their ship
-                            journalData[fid].info = {
-                                ...journalData[fid].info,
-                                ship: parsedEntry.ShipType_Localised,
-                            }
-                            break;
                         case 'Commander': // A users Commander info
                             journalData[fid].info = {
                                 ...journalData[fid].info,
@@ -100,6 +95,7 @@ function sortJournal() {
                         case 'Loadout': // A users Ship info
                             journalData[fid].info = {
                                 ...journalData[fid].info,
+                                ship: ships[parsedEntry.Ship],
                                 cargo: parsedEntry.CargoCapacity
                             }
                             break;
