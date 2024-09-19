@@ -96,21 +96,34 @@ async function getMissionDetails() {
                 }
             }
         });
+
+        const filteredMissions = filterActiveMissions(acceptedMissions, completedMissions, abandonedMissions, failedMissions);
+
+        let allActiveWmmMissions;
+        let allActiveMassacreMissions;
+        let allActiveAssassinMissions;
+        let allActiveMissions;
         
-        const filteredActiveMissions = filterActiveMissions(acceptedMissions, completedMissions, abandonedMissions, failedMissions);
-        // TODO: make this more WMM focus and conditional if there are cargoDepotTransactions
-        const allActiveMissions = updateMissionProgress(filteredActiveMissions, cargoDepotTransactions);
-        
-        // TODO: add a mission update function for massacre missions
+       
+        // Update all WMM missions logic
+        if(filteredMissions.wmm.length > 0) {
+            allActiveWmmMissions = updateWmmMissions(filteredMissions, cargoDepotTransactions);
+        }
+
+        // Update all Massacre missions logic
+        if(filteredMissions.massacre.length > 0 && bountyTransactions.length > 0) {
+            allActiveMassacreMissions = updateMassacreMissions(filteredMissions, bountyTransactions);
+        }
 
         missionData[key].active = {
-            wmm: allActiveMissions.wmm.filter((mission) => mission.ItemsDelivered !== mission.Count),
-            massacre: allActiveMissions.massacre
+            wmm: allActiveWmmMissions ? allActiveWmmMissions.wmm.filter((mission) => mission.ItemsDelivered !== mission.Count) : [],
+            massacre: allActiveMassacreMissions ? allActiveMassacreMissions.massacre : []
         }
         missionData[key].completed = {
-            wmm: allActiveMissions.wmm.filter((mission) => mission.ItemsDelivered === mission.Count),
-            massacre: allActiveMissions.massacre
+            wmm: allActiveWmmMissions ? allActiveWmmMissions.wmm.filter((mission) => mission.ItemsDelivered === mission.Count) : [],
+            massacre: allActiveMassacreMissions ? allActiveMassacreMissions.massacre : []
         }
+
         missionData[key].info = journalData[key].info;
     });
     
@@ -150,14 +163,16 @@ function filterActiveMissions(accepted, completed, failed, abandoned) {
 
     // Helper function to check if a mission is active
     const isMissionActive = (acceptedMission, missionType) => {
-        return !completed[missionType].some(
-            (completedMission) => completedMission.MissionID === acceptedMission.MissionID
-        ) &&
-        !abandoned[missionType].some(
-            (abandonedMission) => abandonedMission.MissionID === acceptedMission.MissionID
-        ) &&
-        !failed[missionType].some(
-            (failedMission) => failedMission.MissionID === acceptedMission.MissionID
+        return !(
+            (completed[missionType] && completed[missionType].some(
+                (completedMission) => completedMission.MissionID === acceptedMission.MissionID
+            )) ||
+            (abandoned[missionType] && abandoned[missionType].some(
+                (abandonedMission) => abandonedMission.MissionID === acceptedMission.MissionID
+            )) ||
+            (failed[missionType] && failed[missionType].some(
+                (failedMission) => failedMission.MissionID === acceptedMission.MissionID
+            ))
         );
     };
 
@@ -171,12 +186,12 @@ function filterActiveMissions(accepted, completed, failed, abandoned) {
     return activeMissions;
 }
 
-function updateMissionProgress(acceptedMissions, cargoDepotMissions) {
+function updateWmmMissions(missions, cargoDepotTransactions) {
     return {
-        ...acceptedMissions,
-        wmm: acceptedMissions.wmm.map(acceptedMission => {
+        ...missions,
+        wmm: missions.wmm.map(acceptedMission => {
         // Find all matching missions in cargoDepotMissions by MissionID
-        const matchingMissions = cargoDepotMissions.filter(
+        const matchingMissions = cargoDepotTransactions.filter(
             cargoMission => cargoMission.MissionID === acceptedMission.MissionID
         );
 
@@ -207,8 +222,27 @@ function updateMissionProgress(acceptedMissions, cargoDepotMissions) {
     }
 }
 
+function updateMassacreMissions(missions, bountyTransactions) {
+    if(!bountyTransactions || bountyTransactions.length === 0) return;
+
+    return {
+        ...missions,
+        massacre: missions.massacre.map(mission => {
+            // find mission that has a matching faction of a bounty
+            // the massacre data should be mapped like
+            // {
+            //     "issueFaction": "A Faction",
+            //     "targetFaction": "B Faction"
+            //     "totalKills": 34,
+            //     "killsLeft": 20
+            //     "missions": []
+            // }
+            const relatedBounties = bountyTransactions.filter(bounty => bounty.VictimFaction === mission.TargetFaction)
+        })
+    }
+}
+
 module.exports = {
     getMissionDetails,
     filterActiveMissions,
-    updateMissionProgress
 }
