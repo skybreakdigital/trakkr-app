@@ -117,11 +117,11 @@ async function getMissionDetails() {
 
         missionData[key].active = {
             wmm: allActiveWmmMissions ? allActiveWmmMissions.wmm.filter((mission) => mission.ItemsDelivered !== mission.Count) : [],
-            massacre: allActiveMassacreMissions ? allActiveMassacreMissions.massacre : []
+            massacre: allActiveMassacreMissions ? allActiveMassacreMissions : []
         }
         missionData[key].completed = {
             wmm: allActiveWmmMissions ? allActiveWmmMissions.wmm.filter((mission) => mission.ItemsDelivered === mission.Count) : [],
-            massacre: allActiveMassacreMissions ? allActiveMassacreMissions.massacre : []
+            massacre: allActiveMassacreMissions ? allActiveMassacreMissions : []
         }
 
         missionData[key].info = journalData[key].info;
@@ -178,8 +178,11 @@ function filterActiveMissions(accepted, completed, failed, abandoned) {
 
     // Loop through each mission type in the accepted object
     for (let missionType in accepted) {
-        activeMissions[missionType] = accepted[missionType].filter((acceptedMission) =>
-            isMissionActive(acceptedMission, missionType)
+        activeMissions[missionType] = accepted[missionType].filter((acceptedMission) => {
+            const isActive =  isMissionActive(acceptedMission, missionType)
+            return isActive;
+        }
+           
         );
     }
 
@@ -223,23 +226,59 @@ function updateWmmMissions(missions, cargoDepotTransactions) {
 }
 
 function updateMassacreMissions(missions, bountyTransactions) {
-    if(!bountyTransactions || bountyTransactions.length === 0) return;
+    if (!bountyTransactions || bountyTransactions.length === 0) return missions;
 
-    return {
-        ...missions,
-        massacre: missions.massacre.map(mission => {
-            // find mission that has a matching faction of a bounty
-            // the massacre data should be mapped like
-            // {
-            //     "issueFaction": "A Faction",
-            //     "targetFaction": "B Faction"
-            //     "totalKills": 34,
-            //     "killsLeft": 20
-            //     "missions": []
-            // }
-            const relatedBounties = bountyTransactions.filter(bounty => bounty.VictimFaction === mission.TargetFaction)
-        })
-    }
+    const factionKillCount = {}; // store the target faction kill count
+    const factions = {}; // push all missions that have the same mission.faction
+
+    missions.massacre.forEach(mission => {
+        if (!factions[mission.Faction]) {
+            factions[mission.Faction] = {
+                issueFaction: mission.Faction,
+                targetFaction: mission.TargetFaction,
+                kills: 0,
+                neededKills: 0,
+                bountyRewardTotal: 0,
+                missionRewardTotal: 0,
+                missions: []
+            };
+        }
+        factions[mission.Faction].missions.push(mission);
+        factions[mission.Faction].neededKills += mission.KillCount;
+        factions[mission.Faction].missionRewardTotal += mission.Reward;
+    });
+
+    bountyTransactions.forEach(bounty => {
+        const bountyTs = new Date(bounty.timestamp);
+
+        if (!factionKillCount[bounty.VictimFaction]) {
+            factionKillCount[bounty.VictimFaction] = 0;
+        }
+
+        // For each mission in each faction, tally the kills if the bounty is after the mission timestamp
+        Object.keys(factions).forEach(faction => {
+            factions[faction].missions.forEach(mission => {
+                const missionTs = new Date(mission.timestamp);
+
+                if (bountyTs > missionTs && bounty.VictimFaction === mission.TargetFaction) {
+                    if(factions[faction].neededKills > factions[faction].kills) {
+                        factions[faction].kills++
+                        factions[faction].bountyRewardTotal += bounty.TotalReward;
+                    }
+                }
+            });
+        });
+    });
+
+    return Object.keys(factions).map(factionKey => ({
+        issueFaction: factions[factionKey].issueFaction,
+        targetFaction: factions[factionKey].targetFaction,
+        kills: factions[factionKey].kills,
+        neededKills: factions[factionKey].neededKills,
+        bountyRewardTotal: factions[factionKey].bountyRewardTotal,
+        missionRewardTotal: factions[factionKey].missionRewardTotal,
+        missions: factions[factionKey].missions
+    }));
 }
 
 module.exports = {

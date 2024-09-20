@@ -1,0 +1,13 @@
+.mission-list-item {
+    &.active {
+        .row-item {
+            background: rgba($gray-light, 0.75) !important;
+        }
+    }
+}
+.row-item-dropdown {
+    background: $gray2;
+    border-bottom: 1px solid $gray-light;
+    margin-bottom: 3px;
+    margin-right: .5rem;
+}
