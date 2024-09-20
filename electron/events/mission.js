@@ -249,7 +249,7 @@ function updateMassacreMissions(missions, bountyTransactions) {
     });
 
     bountyTransactions.forEach(bounty => {
-        const bountyTs = new Date(bounty.timestamp);
+        const bountyTimestamp = new Date(bounty.timestamp);
 
         if (!factionKillCount[bounty.VictimFaction]) {
             factionKillCount[bounty.VictimFaction] = 0;
@@ -257,16 +257,27 @@ function updateMassacreMissions(missions, bountyTransactions) {
 
         // For each mission in each faction, tally the kills if the bounty is after the mission timestamp
         Object.keys(factions).forEach(faction => {
-            factions[faction].missions.forEach(mission => {
-                const missionTs = new Date(mission.timestamp);
+            let missionTargetFaction;
+            let bountyOutOfBounds = false;
 
-                if (bountyTs > missionTs && bounty.VictimFaction === mission.TargetFaction) {
-                    if(factions[faction].neededKills > factions[faction].kills) {
-                        factions[faction].kills++
-                        factions[faction].bountyRewardTotal += bounty.TotalReward;
-                    }
+            factions[faction].missions.forEach(mission => {
+                const missionTimestamp = new Date(mission.timestamp);
+                
+                if(!missionTargetFaction) {
+                    missionTargetFaction = mission.TargetFaction;
+                }
+
+                if(bountyTimestamp < missionTimestamp) {
+                    bountyOutOfBounds = true;
                 }
             });
+
+            if (!bountyOutOfBounds && bounty.VictimFaction === missionTargetFaction) {
+                if(factions[faction].neededKills > factions[faction].kills) {
+                    factions[faction].kills++
+                    factions[faction].bountyRewardTotal += bounty.TotalReward;
+                }
+            }
         });
     });
 
@@ -278,7 +289,8 @@ function updateMassacreMissions(missions, bountyTransactions) {
         bountyRewardTotal: factions[factionKey].bountyRewardTotal,
         missionRewardTotal: factions[factionKey].missionRewardTotal,
         missions: factions[factionKey].missions
-    }));
+    }))
+    .sort((a, b) => b.neededKills - a.neededKills);
 }
 
 module.exports = {

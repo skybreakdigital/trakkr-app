@@ -3,10 +3,15 @@ import { formatCredit } from "../../helpers/formatNumber";
 import './MassacreMissions.scss';
 
 function MassacreMission({ missions }: any) {
-    const [visibleRowIdx, setVisibleRowIdx]: any = useState(0);
+    const [visibleRowIdx, setVisibleRowIdx]: any = useState(null);
 
     const onRowClick = (index: number) => {
-        setVisibleRowIdx(index)
+        if(visibleRowIdx !== index) {
+            setVisibleRowIdx(index);
+        } else {
+            setVisibleRowIdx(null);
+        }
+        
     }
 
     const calculateDiff = (index: number) => {
@@ -14,9 +19,9 @@ function MassacreMission({ missions }: any) {
             return 0;
         }
     
-        const prevStackKills = missions[index - 1].neededKills;
+        const maxStackKills = Math.max(...missions.map((mission: any) => mission.neededKills));
         const currentStackKills = missions[index].neededKills;
-        const killDifference = prevStackKills - currentStackKills;
+        const killDifference = maxStackKills - currentStackKills;
     
         return killDifference >= 0 ? `+${killDifference}` : 0;
     }
@@ -39,7 +44,7 @@ function MassacreMission({ missions }: any) {
                                 <div>
                                     <span className="font-bold pr-3">{index + 1}</span>{data.issueFaction}
                                 </div>
-                                <progress value={data.neededKills / data.kills * 100} max={1} />
+                                <progress value={(data.kills / data.neededKills)} max={1} />
                             </div>
                             <div className="row-item w-3 px-1 py-2">{data.targetFaction}</div>
                             <div className="row-item w-2 px-1 py-2">{`${data.kills} / ${data.neededKills}`} <span className="text-accent">({`${data.neededKills - data.kills} Left`})</span></div>
