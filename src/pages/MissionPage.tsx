@@ -14,6 +14,7 @@ import Config from "../components/Config/Config";
 import dayjs from "dayjs";
 import MessageBuilder from "../components/MessageBuilder/MessageBuilder";
 import { Dropdown } from "primereact/dropdown";
+import { formatCredit } from "../helpers/formatNumber";
 
 function MissionPage() {
   const { activeCommander, fetchMissionData, state }: any =
@@ -318,9 +319,10 @@ function MissionPage() {
           {checkHasMissions() ? (
             <Evaluation
               data={{
-                totalMissionValue: calculateMissionValue(),
-                investment: totalInvestment,
-                shareDate: calculateShareDate()
+                shareDate: dayjs(calculateShareDate()).fromNow(),
+                investment: formatCredit(totalInvestment),
+                stackProfit: formatCredit(calculateMissionValue() - totalInvestment),
+                totalMissionValue: formatCredit(calculateMissionValue()),
               }}
             />
           ) : (
