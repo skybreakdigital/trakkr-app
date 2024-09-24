@@ -1,31 +1,45 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { formatCredit } from "../../helpers/formatNumber";
 import './MassacreMissions.scss';
+import dayjs from "dayjs";
+import { formatUnder24hour, setRemainingTime } from "../../helpers/formatTime";
 
 function MassacreMission({ missions }: any) {
     const [visibleRowIdx, setVisibleRowIdx]: any = useState(null);
+    const [time, setTime]: any = useState("");
 
     let prevMissionKills = 0;
 
     const onRowClick = (index: number) => {
-        if(visibleRowIdx !== index) {
+        if (visibleRowIdx !== index) {
             setVisibleRowIdx(index);
         } else {
             setVisibleRowIdx(null);
         }
-        
+
     }
 
     const calculateDiff = (index: number) => {
         if (index - 1 < 0) {
             return 0;
         }
-    
+
         const maxStackKills = Math.max(...missions.map((mission: any) => mission.neededKills));
         const currentStackKills = missions[index].neededKills;
         const killDifference = maxStackKills - currentStackKills;
-    
+
         return killDifference >= 0 ? `+${killDifference}` : 0;
+    }
+
+    const onDestinationClick = (destination: string) => {
+        navigator.clipboard
+            .writeText(destination)
+            .then(() => {
+                alert(`You have copied ${destination}. Paste in galaxy map to set navigation.`);
+            })
+            .catch((error) => {
+                console.error("Failed to copy: ", error);
+            });
     }
 
     const setMissionKillLabel = (totalKills: number, missionKillCount: number, neededKills: number, index: number) => {
@@ -33,16 +47,27 @@ function MassacreMission({ missions }: any) {
 
         if (totalKills > 0) {
             const availableKills = totalKills - prevMissionKills;
-    
-            // Allocate kills up to the current mission's required kill count
+
             missionKills = Math.min(availableKills, missionKillCount);
-            
-            // Increment prevMissionKills by the amount of kills assigned to this mission
+
             prevMissionKills += missionKills;
         }
 
         return `${missionKills} / ${missionKillCount} Kills`;
     };
+
+    useEffect(() => {    
+        const updateTimeLeft = () => {
+          const newTimeLeft = missions.map((data: any) => {
+            return data.missions.map((mission: any) => setRemainingTime(mission.Expiry))
+          });
+          setTime(newTimeLeft);
+        };
+    
+        const intervalId = setInterval(updateTimeLeft, 1000);
+    
+        return () => clearInterval(intervalId); // Cleanup on unmount
+      }, [time]);
 
     return (
         <div className="ActiveMissions w-9">
@@ -71,14 +96,15 @@ function MassacreMission({ missions }: any) {
                             <div className="row-item w-2 px-1 py-2 text-center text-accent">{formatCredit(data.missionRewardTotal + data.bountyRewardTotal)}</div>
                         </li>
                         {data.missions.map((mission: any, missionIdx: any) => (
-                                visibleRowIdx === index && (
-                                    <li key={missionIdx} className="row-item-dropdown uppercase">
-                                    <div className="row-item custom w-5 px-1 py-2 uppercase">{mission.LocalisedName}</div>
-                                    <div className="row-item w-3 px-1 py-2">{mission.DestinationSystem} <i className="fa-solid fa-chevron-right text-xs mx-2" /> {mission.DestinationStation}</div>
-                                    <div className="row-item w-2 px-1 py-2 text-center">{setMissionKillLabel(data.kills, mission.KillCount, data.neededKills, index)}</div>
-                                    <div className="row-item w-2 px-1 py-2 text-accent text-center">{formatCredit(mission.Reward)}</div>
+                            visibleRowIdx === index && (
+                                <li key={missionIdx} className="row-item-dropdown uppercase">
+                                    <div className="row-item custom w-4 px-1 py-2 uppercase"><span className="opacity-50">{mission.LocalisedName}</span></div>
+                                    <div className="row-item w-3 px-1 py-2"><span className="text-accent cursor-pointer" onClick={() => onDestinationClick(mission.DestinationSystem)}>{mission.DestinationSystem}</span> <i className="fa-solid fa-chevron-right text-xs mx-2" /> {mission.DestinationStation}</div>
+                                    <div className="row-item w-1 px-1 py-2 text-center">{setMissionKillLabel(data.kills, mission.KillCount, data.neededKills, index)}</div>
+                                    <div className="row-item w-3 px-1 py-2 text-center">{dayjs(data.Expiry).format('ddd, MMM D, YYYY')} <span className={`${formatUnder24hour(mission.Expiry) ? 'expires w-8' : 'w-8'}`}>{time[index][missionIdx]}</span></div>
+                                    <div className="row-item w-1 px-1 py-2 text-accent text-center">{formatCredit(mission.Reward)}</div>
                                 </li>
-                                )
+                            )
                         ))}
                     </Fragment>
                 ))}
