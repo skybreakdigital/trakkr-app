@@ -1,5 +1,11 @@
 .mission-list-item {
     cursor: pointer;
+    .badge {
+        &.accent {
+            width: auto;
+            border-radius: 4rem;
+        }
+    }
     &.active {
         .row-item {
             background: rgba($gray-light, 0.75) !important;

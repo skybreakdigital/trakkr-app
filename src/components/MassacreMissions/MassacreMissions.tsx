@@ -56,42 +56,49 @@ function MassacreMission({ missions }: any) {
         return `${missionKills} / ${missionKillCount} Kills`;
     };
 
-    useEffect(() => {    
+    useEffect(() => {
         const updateTimeLeft = () => {
-          const newTimeLeft = missions.map((data: any) => {
-            return data.missions.map((mission: any) => setRemainingTime(mission.Expiry))
-          });
-          setTime(newTimeLeft);
+            const newTimeLeft = missions.map((data: any) => {
+                return data.missions.map((mission: any) => setRemainingTime(mission.Expiry))
+            });
+            setTime(newTimeLeft);
         };
-    
+
         const intervalId = setInterval(updateTimeLeft, 1000);
-    
+
         return () => clearInterval(intervalId); // Cleanup on unmount
-      }, [time]);
+    }, [time]);
 
     return (
         <div className="ActiveMissions w-9">
             <ul className="mission-list">
                 <li className="mission-list-header w-full uppercase">
-                    <div className="row-item w-4 px-1 text-left">Issued By</div>
+                    <div className="row-item w-5 px-1 text-left">Issued By</div>
                     <div className="row-item w-3 px-1">Target</div>
                     <div className="row-item w-2 px-1">Kills</div>
-                    <div className="row-item w-1 text-center px-1">Diff</div>
+                    {/* <div className="row-item w-1 text-center px-1">Diff</div> */}
                     <div className="row-item w-2 text-center px-1">Mission Earnings</div>
                     <div className="row-item w-2 text-center px-1">Total Earnings</div>
                 </li>
                 {missions?.map((data: any, index: number) => (
                     <Fragment key={index}>
                         <li className={`mission-list-item w-full ${visibleRowIdx === index ? 'active' : ''}`} onClick={() => onRowClick(index)}>
-                            <div className="row-item custom w-4 px-1 py-2">
-                                <div>
-                                    <span className="font-bold pr-3">{index + 1}</span>{data.issueFaction}
+                            <div className="row-item custom w-5 px-1 py-2">
+                                <div className="flex justify-content-between align-items-center gap-2">
+                                    <div className="flex gap-2">
+                                        <div className="font-bold pr-3">{index + 1}</div>
+                                        <div>{data.issueFaction}</div>
+                                    </div>
+                                    
+                                    <div className="text-accent ml-3 px-2 text-xs flex flex-grow-0 justify-content-center align-items-center">
+                                        <div>{calculateDiff(index)}</div>
+                                    </div>
                                 </div>
                                 <progress value={(data.kills / data.neededKills)} max={1} />
                             </div>
                             <div className="row-item w-3 px-1 py-2">{data.targetFaction}</div>
                             <div className="row-item w-2 px-1 py-2">{`${data.kills} / ${data.neededKills}`} <span className="text-accent">({`${data.neededKills - data.kills} Left`})</span></div>
-                            <div className="row-item w-1 px-1 py-2 text-center">{calculateDiff(index)}</div>
+                            {/* <div className="row-item w-1 px-1 py-2 text-center">{calculateDiff(index)}</div> */}
                             <div className="row-item w-2 px-1 py-2 text-center">{formatCredit(data.missionRewardTotal)}</div>
                             <div className="row-item w-2 px-1 py-2 text-center text-accent">{formatCredit(data.missionRewardTotal + data.bountyRewardTotal)}</div>
                         </li>
