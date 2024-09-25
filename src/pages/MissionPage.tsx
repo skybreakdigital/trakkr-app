@@ -17,8 +17,7 @@ import { Dropdown } from "primereact/dropdown";
 import { formatCredit } from "../helpers/formatNumber";
 
 function MissionPage() {
-  const { activeCommander, fetchMissionData, state }: any =
-    useCommanderState();
+  const { activeCommander, fetchMissionData, state }: any = useCommanderState();
 
   const [menuItems, setMenuItems]: any = useState([
     { label: "Active", active: true, data: { count: "0" } },
@@ -145,12 +144,12 @@ function MissionPage() {
           .sort((a, b) => b.count - a.count);
 
         acc[station] = sortedCommodities;
-     
+
         totalInvestment = sortedCommodities.reduce(
           (sum, item) => sum + item.value,
           0
         );
-        
+
         return acc;
       },
       {} as Record<string, any[]>
@@ -272,72 +271,85 @@ function MissionPage() {
         ) : (
           <Config />
         )}
-        <div className="w-3 flex flex-column">
-          <Stats
-            statData={[
-              {
-                label: "Total Missions",
-                value: acceptedMissions?.length + completedMissions?.length
-              },
-              { label: "Fulfilled", value: completedMissions?.length },
-              { label: "Total Tonnage", value: calculateTonnage() }
-            ]}
-          />
 
-          <div className="my-3">
-            <SectionTitle title="Ship Specs" />
-            <ShipSpecs />
-          </div>
+        {checkHasMissions() ? (
+          <div className="w-3 flex flex-column">
+            <Stats
+              statData={[
+                {
+                  label: "Total Missions",
+                  value: acceptedMissions?.length + completedMissions?.length
+                },
+                { label: "Fulfilled", value: completedMissions?.length },
+                { label: "Total Tonnage", value: calculateTonnage() }
+              ]}
+            />
 
-          <div className="my-3">
-            <div className="flex justify-content-between align-items-center">
-              <SectionTitle title="Commodities" />
-              <div className="w-6">
-                {commodities && (
-                  <Dropdown
-                    value={commodityOption}
-                    options={Object.keys(commodities)
-                      .sort((a, b) =>
-                        a === "All" ? -1 : b === "All" ? 1 : a.localeCompare(b)
-                      )
-                      .map((key) => key)}
-                    onChange={onCommodityOptionChange}
-                    className="w-full uppercase"
-                  />
-                )}
-              </div>
+            <div className="my-3">
+              <SectionTitle title="Ship Specs" />
+              <ShipSpecs />
             </div>
 
-            {checkHasMissions() ? (
-              <Commodity commodityData={commodities[commodityOption]} />
-            ) : (
-              <Empty message="No Mission Data. Commodities could not be completed.." />
-            )}
-          </div>
+            <div className="my-3">
+              <div className="flex justify-content-between align-items-center">
+                <SectionTitle title="Commodities" />
+                <div className="w-6">
+                  {commodities && (
+                    <Dropdown
+                      value={commodityOption}
+                      options={Object.keys(commodities)
+                        .sort((a, b) =>
+                          a === "All"
+                            ? -1
+                            : b === "All"
+                            ? 1
+                            : a.localeCompare(b)
+                        )
+                        .map((key) => key)}
+                      onChange={onCommodityOptionChange}
+                      className="w-full uppercase"
+                    />
+                  )}
+                </div>
+              </div>
 
-          <SectionTitle title="Evaluation" />
-          {checkHasMissions() ? (
-            <Evaluation
-              data={{
-                shareDate: dayjs(calculateShareDate()).fromNow(),
-                investment: formatCredit(totalInvestment),
-                stackProfit: formatCredit(calculateMissionValue() - totalInvestment),
-                totalMissionValue: formatCredit(calculateMissionValue()),
-              }}
-            />
-          ) : (
-            <Empty message="No Mission Data. Evaluation could not be completed.." />
-          )}
-          <div className="my-3 flex justify-content-end align-items-center">
-            <button
-              className="accent"
-              onClick={() => setBuilderVisible(true)}
-              disabled={completedMissions.length < 10}
-            >
-              Share Stack
-            </button>
+              {checkHasMissions() ? (
+                <Commodity commodityData={commodities[commodityOption]} />
+              ) : (
+                <Empty message="No Mission Data. Commodities could not be completed.." />
+              )}
+            </div>
+
+            <SectionTitle title="Evaluation" />
+            {checkHasMissions() ? (
+              <Evaluation
+                data={{
+                  shareDate: dayjs(calculateShareDate()).fromNow(),
+                  investment: formatCredit(totalInvestment),
+                  stackProfit: formatCredit(
+                    calculateMissionValue() - totalInvestment
+                  ),
+                  totalMissionValue: formatCredit(calculateMissionValue())
+                }}
+              />
+            ) : (
+              <Empty message="No Mission Data. Evaluation could not be completed.." />
+            )}
+            <div className="my-3 flex justify-content-end align-items-center">
+              <button
+                className="accent"
+                onClick={() => setBuilderVisible(true)}
+                disabled={completedMissions.length < 10}
+              >
+                Share Stack
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="w-3 mt-3 flex flex-column">
+            <Empty message="No Mission Data. Statistics are not available.." />
+          </div>
+        )}
       </div>
       <Dialog
         header="Share Stack"
