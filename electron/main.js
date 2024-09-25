@@ -31,18 +31,30 @@ function createSplashScreen() {
 
 }
 
-function createWindow() {
+async function createWindow() {
     Menu.setApplicationMenu(null);
 
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    let windowBounds;
+
+    // const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const state = await getState();
+
+    if(state && state.windowBounds) {
+        windowBounds = state.windowBounds;
+    } else {
+        windowBounds = screen.getPrimaryDisplay().workAreaSize;
+    }
+    
 
     const iconPath = process.platform === 'win32'
         ? path.join(__dirname, '../public/favicon-32x32.ico')
         : path.join(__dirname, '../public/favicon-16x16.png');
 
     mainWindow = new BrowserWindow({
-        width,
-        height,
+        width: windowBounds.width,
+        height: windowBounds.height,
+        x: windowBounds.x ? windowBounds.x : 0,
+        y: windowBounds.y ? windowBounds.y : 0,
         icon: iconPath,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -67,8 +79,20 @@ function createWindow() {
         watchJournalChanges(mainWindow);
     });
 
+    const saveWindowBounds = () => {
+        if (!mainWindow.isDestroyed()) {
+            const { x, y, width, height } = mainWindow.getBounds();
+            setState({
+                windowBounds: { x, y, width, height }
+            });
+        }
+    };
+
+    mainWindow.on('resize', saveWindowBounds);
+    mainWindow.on('move', saveWindowBounds);
 
     mainWindow.on('closed', () => {
+        saveWindowBounds();
         mainWindow = null;
     });
 }
