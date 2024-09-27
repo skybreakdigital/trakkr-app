@@ -11,7 +11,7 @@ function Config() {
   const [initialConfig, setInitialConfig]: any = useState({});
 
   const onNameChange = (e: any, oldKey: string) => {
-    const { value: newKey } = e.target;
+    const newKey = e.target.value.toLowerCase();
 
     if (!newKey.trim()) return;
 
