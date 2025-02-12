@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import CommanderTab from "./components/CommanderTab/CommanderTab";
 import { CommanderProvider, useCommanderState } from "./context/Commander";
 import dayjs from "dayjs";
+import Empty from "./components/Empty/Empty";
 
 function Layout() {
   const { missionData, activeCommander, setCommander: chooseActiveCommander, loading }: any = useCommanderState();
@@ -50,12 +51,17 @@ function Layout() {
     <div className="Layout flex">
       <NavMenu />
       <div className='p-3 flex flex-column w-full content'>
-        {missionData && (
-          <CommanderTab commanderData={commanderData} />
+        {missionData && missionData.length > 0 ? (
+          <>
+            <CommanderTab commanderData={commanderData} />
+            <h2 className='m-0'>Welcome back, <span className="uppercase">{commander?.info?.name}</span></h2>
+            <Outlet />
+          </>
+        ) : (
+          <Empty message="No Mission Data. Please pick up some missions.." />
         )}
 
-        <h2 className='m-0'>Welcome back, <span className="uppercase">{commander?.info?.name}</span></h2>
-        <Outlet />
+        
       </div>
     </div>
   )
